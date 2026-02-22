@@ -25,7 +25,7 @@ on:
   #   - 'src/**/*.cs'
   #   - 'src/**/*.csproj'
   schedule:
-    - cron: '23 20 03,16 * *'
+    - cron: '29 20 03,16 * *'
   workflow_dispatch:
 
 env:

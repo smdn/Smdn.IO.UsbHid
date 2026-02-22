@@ -13,16 +13,12 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://smdn.jp/electronics/libs/Smdn.Devices.MCP2221/</PackageProjectUrl>
+    <PackageProjectUrl>https://smdn.jp/electronics/libs/Smdn.IO.UsbHid/</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
-    <RepositoryUrl>https://github.com/smdn/Smdn.Devices.MCP2221</RepositoryUrl>
+    <RepositoryUrl>https://github.com/smdn/Smdn.IO.UsbHid</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-  </PropertyGroup>
-
-  <PropertyGroup Label="code analysis">
-    <StyleCopAnalyzersConfigurationFile>$(MSBuildThisFileDirectory)stylecop.json</StyleCopAnalyzersConfigurationFile>
   </PropertyGroup>
 
   <ItemGroup>

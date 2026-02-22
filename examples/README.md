@@ -1,4 +1,4 @@
-# Examples for Smdn.Devices.MCP2221.*
+# Examples for Smdn.IO.UsbHid.*
 
 ## How to run examples
 Move to each example directory and execute the command `dotnet run`.

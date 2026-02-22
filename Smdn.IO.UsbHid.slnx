@@ -1,0 +1,16 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Smdn.IO.UsbHid.Abstractions/Smdn.IO.UsbHid.Abstractions.csproj" />
+    <Project Path="src/Smdn.IO.UsbHid.Providers.HidSharp/Smdn.IO.UsbHid.Providers.HidSharp.csproj" />
+    <Project Path="src/Smdn.IO.UsbHid.Providers.LibUsbDotNet/Smdn.IO.UsbHid.Providers.LibUsbDotNet.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Smdn.IO.UsbHid.Abstractions/Smdn.IO.UsbHid.Abstractions.Tests.csproj" />
+    <Project Path="tests/Smdn.IO.UsbHid.Providers.HidSharp/Smdn.IO.UsbHid.Providers.HidSharp.Tests.csproj" />
+    <Project Path="tests/Smdn.IO.UsbHid.Providers.LibUsbDotNet/Smdn.IO.UsbHid.Providers.LibUsbDotNet.Tests.csproj" />
+  </Folder>
+</Solution>
