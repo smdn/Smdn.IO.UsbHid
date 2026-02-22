@@ -2,52 +2,25 @@
 SPDX-FileCopyrightText: 2023 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
-<Project
-  InitialTargets="
-    ReplaceSmdnDevicesMCP2221PackageReferencesToProjectReferences;
-    ReplaceSmdnDevicesUsbPackageReferencesToProjectReferences
-  "
->
-  <!-- Replace PackageReference to ProjectReference of the local project -->
+<Project InitialTargets="ReplaceSmdnIOUsbHidPackageReferencesToProjectReferences">
   <Target
-    Name="ReplaceSmdnDevicesMCP2221PackageReferencesToProjectReferences"
+    Name="ReplaceSmdnIOUsbHidPackageReferencesToProjectReferences"
     Condition=" '$(UseLocalProjectInsteadOfPublishedPackage)' == 'true' "
   >
     <ItemGroup>
-      <_SmdnDevicesMCP2221Reference
+      <_SmdnIOUsbHidReference
         Include="@(PackageReference)"
-        Condition="$([System.String]::new('%(Identity)').StartsWith('Smdn.Devices.MCP2221'))"
+        Condition="$([System.String]::new('%(Identity)').StartsWith('Smdn.IO.UsbHid'))"
         ProjectPath="$(MSBuildThisFileDirectory)..\src\%(Identity)\%(Identity).csproj"
       />
     </ItemGroup>
 
     <ItemGroup>
-      <!-- Remove package references to Smdn.Devices.MCP2221.* -->
-      <PackageReference Remove="@(_SmdnDevicesMCP2221Reference)" />
+      <!-- Remove package references to Smdn.IO.UsbHid.* -->
+      <PackageReference Remove="@(_SmdnIOUsbHidReference)" />
 
-      <!-- Include project reference to Smdn.Devices.MCP2221.* -->
-      <ProjectReference Include="%(_SmdnDevicesMCP2221Reference.ProjectPath)" />
-    </ItemGroup>
-  </Target>
-
-  <Target
-    Name="ReplaceSmdnDevicesUsbPackageReferencesToProjectReferences"
-    Condition=" '$(UseLocalProjectInsteadOfPublishedPackage)' == 'true' "
-  >
-    <ItemGroup>
-      <_SmdnDevicesUsbReference
-        Include="@(PackageReference)"
-        Condition="$([System.String]::new('%(Identity)').StartsWith('Smdn.Devices.UsbHid'))"
-        ProjectPath="$(MSBuildThisFileDirectory)..\src\%(Identity)\%(Identity).csproj"
-      />
-    </ItemGroup>
-
-    <ItemGroup>
-      <!-- Remove package references to Smdn.Devices.Usb.* -->
-      <PackageReference Remove="@(_SmdnDevicesUsbReference)" />
-
-      <!-- Include project reference to Smdn.Devices.Usb.* -->
-      <ProjectReference Include="%(_SmdnDevicesUsbReference.ProjectPath)" />
+      <!-- Include project reference to Smdn.IO.UsbHid.* -->
+      <ProjectReference Include="%(_SmdnIOUsbHidReference.ProjectPath)" />
     </ItemGroup>
   </Target>
 </Project>

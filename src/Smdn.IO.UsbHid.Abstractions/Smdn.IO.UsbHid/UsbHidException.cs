@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+
+using System;
+
+namespace Smdn.IO.UsbHid;
+
+/// <summary>
+/// The exception that is thrown when an error occurs during a USB-HID device operation.
+/// </summary>
+public class UsbHidException : InvalidOperationException {
+  public UsbHidException() : base() { }
+  public UsbHidException(string message) : base(message) { }
+  public UsbHidException(string message, Exception innerException) : base(message, innerException) { }
+}
