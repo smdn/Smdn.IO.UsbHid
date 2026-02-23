@@ -52,6 +52,19 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
       <PackageReadmeFileContent><![CDATA[# $(PackageId) $(PackageVersion)
 $(Description)
 
+## Usage
+The following example demonstrates registering and getting USB HID services (`IUsbHidService`) via
+`ServiceCollection` and `IServiceProvider`, and getting a list of USB HID devices.
+
+```cs
+$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\..\examples\$(PackageId)\GettingStarted\Program.cs').TrimEnd())
+```
+
+`AddHidSharpUsbHid()` registers the HidSharp as backend provider. By changing this to another provider's registration method,
+you can switch backends without modifying other code.
+
+More examples can be found on the [GitHub repository]($(RepositoryUrl)/tree/$(SmdnWorkflowsDotNetExpectedReleaseTag)/examples/$(PackageId)/).
+
 ## Contributing
 This project welcomes contributions, feedbacks and suggestions. You can contribute to this project by submitting [Issues]($(RepositoryUrl)/issues/new/choose) or [Pull Requests]($(RepositoryUrl)/pulls/) on the [GitHub repository]($(RepositoryUrl)).
 

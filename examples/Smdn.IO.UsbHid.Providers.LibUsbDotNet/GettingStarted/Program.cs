@@ -6,27 +6,25 @@ using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
 
-services.AddLibUsbDotNetUsbHid( // add singleton
-  serviceKey: "service 1",
+// Register the IUsbHidService using LibUsbDotNet as the implementation provider
+services.AddLibUsbDotNetUsbHid(
   configure: static (builder, options) => {
+    // Specify the log level for output to stdout by LibUsbDotNet
     options.DebugLevel = LogLevel.Information;
   }
-);
-services.AddLogging(
-  builder => builder
-    .AddSimpleConsole(static options => options.SingleLine = true)
-    .AddFilter(static level => LogLevel.Trace <= level)
 );
 
 var serviceProvider = services.BuildServiceProvider();
 
-var usbHidService = serviceProvider.GetRequiredKeyedService<IUsbHidService>(serviceKey: "service 1");
+// Request IUsbHidService from IServiceProvider
+var usbHidService = serviceProvider.GetRequiredService<IUsbHidService>();
 
-const int DeviceVendorID = 0x04d8;
-const int DeviceProductID = 0x00dd;
+const int VendorId = 0x04d8;
+const int ProductId = 0x00dd;
 
-foreach (var device in usbHidService.GetDevices(DeviceVendorID, DeviceProductID)) {
-  Console.WriteLine($"{device.VendorId:X4}:{device.ProductId:X4}:");
+// Get and list all devices with a specific Vendor ID and Product ID
+foreach (IUsbHidDevice device in usbHidService.GetDevices(VendorId, ProductId)) {
+  Console.WriteLine($"{device.VendorId:X4}:{device.ProductId:X4}");
 
   if (device.TryGetProductName(out var productName))
     Console.WriteLine($"  {productName}");
@@ -37,10 +35,15 @@ foreach (var device in usbHidService.GetDevices(DeviceVendorID, DeviceProductID)
   if (device.TryGetSerialNumber(out var serialNumber))
     Console.WriteLine($"  {serialNumber}");
 
-  if (device.TryGetDeviceIdentifier(out var deviceIdentifier))
-    Console.WriteLine($"  {deviceIdentifier}");
+  // Open the device endpoint to send and receive HID reports
+  using IUsbHidEndPoint endPoint = device.OpenEndPoint(shouldDisposeDevice: true);
 
-  using var endPoint = device.OpenEndPoint(shouldDisposeDevice: true);
+  // await endPoint.ReadAsync(...);
+  // await endPoint.WriteAsync(...);
 
-  endPoint.Dispose();
+  // Dispose the endpoint
+  await endPoint.DisposeAsync();
+  // Specifying true for `shouldDisposeDevice` when calling the OpenEndPoint()
+  // method will also dispose of the original IUsbHidDevice along with
+  // calling IUsbHidEndPoint.Dispose()
 }
