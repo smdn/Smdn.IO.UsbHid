@@ -19,7 +19,7 @@ that utilizes the [HIDSharp](https://github.com/SeekHisKingdom/HIDSharp/) librar
 It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `HidSharp` implementation.
 ]]>
     </Description>
-    <PackageTags>USB,USB-HID</PackageTags>
+    <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device,HidSharp</PackageTags>
     <CopyrightYear>2026</CopyrightYear>
     <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>

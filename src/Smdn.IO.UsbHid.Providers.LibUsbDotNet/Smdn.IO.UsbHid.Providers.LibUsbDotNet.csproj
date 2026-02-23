@@ -19,7 +19,7 @@ that utilizes the [LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet) l
 It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `LibUsbDotNet` implementation.
 ]]>
     </Description>
-    <PackageTags>USB,USB-HID</PackageTags>
+    <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device,LibUsbDotNet</PackageTags>
     <CopyrightYear>2026</CopyrightYear>
     <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>

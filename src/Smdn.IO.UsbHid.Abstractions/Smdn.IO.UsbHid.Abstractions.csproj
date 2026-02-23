@@ -24,7 +24,7 @@ The following packages are available for USB-HID implementations:
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
 ]]>
     </Description>
-    <PackageTags>USB,USB-HID</PackageTags>
+    <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device</PackageTags>
     <CopyrightYear>2026</CopyrightYear>
     <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>
