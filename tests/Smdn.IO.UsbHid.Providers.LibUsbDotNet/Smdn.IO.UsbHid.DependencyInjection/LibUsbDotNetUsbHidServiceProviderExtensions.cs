@@ -16,7 +16,13 @@ public class LibUsbDotNetUsbHidServiceProviderExtensionsTests {
   [Test]
   public void GetResiliencePipelineProviderForLibUsbDotNetUsbHidService_ServiceProviderNull()
     => Assert.That(
-      () => (null as IServiceProvider)!.GetResiliencePipelineProviderForLibUsbDotNetUsbHidService("service-key"),
+      () => (null as IServiceProvider)!
+#if LIBUSBDOTNET_V3
+        .GetResiliencePipelineProviderForLibUsbDotNetV3UsbHidService
+#else
+        .GetResiliencePipelineProviderForLibUsbDotNetUsbHidService
+#endif
+        ("service-key"),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("serviceProvider")
     );
 
@@ -27,31 +33,57 @@ public class LibUsbDotNetUsbHidServiceProviderExtensionsTests {
 
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      ServiceKey,
-      (builder, options) => {
-        builder.AddResiliencePipelineForOpenEndPoint(
-          new RetryStrategyOptions()
-        );
-      }
-    );
-    services.AddLibUsbDotNetUsbHid(
-      (builder, options) => {
-        builder.AddResiliencePipelineForOpenEndPoint(
-          new RetryStrategyOptions()
-        );
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        ServiceKey,
+        (builder, options) => {
+          builder.AddResiliencePipelineForOpenEndPoint(
+            new RetryStrategyOptions()
+          );
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        (builder, options) => {
+          builder.AddResiliencePipelineForOpenEndPoint(
+            new RetryStrategyOptions()
+          );
+        }
+      );
+
+    using var provider = services.BuildServiceProvider();
 
     Assert.That(
-      provider.GetResiliencePipelineProviderForLibUsbDotNetUsbHidService(ServiceKey),
+      provider
+#if LIBUSBDOTNET_V3
+        .GetResiliencePipelineProviderForLibUsbDotNetV3UsbHidService
+#else
+        .GetResiliencePipelineProviderForLibUsbDotNetUsbHidService
+#endif
+        (ServiceKey),
       Is.Not.Null
     );
 
     Assert.That(
-      provider.GetResiliencePipelineProviderForLibUsbDotNetUsbHidService(null),
+      provider
+#if LIBUSBDOTNET_V3
+        .GetResiliencePipelineProviderForLibUsbDotNetV3UsbHidService
+#else
+        .GetResiliencePipelineProviderForLibUsbDotNetUsbHidService
+#endif
+        (null),
       Is.Not.Null
     );
   }

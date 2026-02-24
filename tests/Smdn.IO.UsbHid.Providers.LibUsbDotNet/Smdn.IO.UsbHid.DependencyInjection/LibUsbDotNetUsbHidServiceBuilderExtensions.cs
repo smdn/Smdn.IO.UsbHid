@@ -18,7 +18,12 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
   [Test]
   public void AddResiliencePipelineForOpenEndPoint_BuilderNull()
   {
-    LibUsbDotNetUsbHidServiceBuilder<string> nullBuilder = null!;
+#if LIBUSBDOTNET_V3
+    LibUsbDotNetV3UsbHidServiceBuilder
+#else
+    LibUsbDotNetUsbHidServiceBuilder
+#endif
+    <string> nullBuilder = null!;
 
     Assert.That(
       () => nullBuilder.AddResiliencePipelineForOpenEndPoint(retryOptions: new RetryStrategyOptions()),
@@ -35,10 +40,24 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
   {
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid();
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      ();
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredService<LibUsbDotNetUsbHidServiceBuilder<object?>>();
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <object?>
+    >();
 
     Assert.That(
       () => builder.AddResiliencePipelineForOpenEndPoint(retryOptions: null!),
@@ -51,10 +70,24 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
   {
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid();
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      ();
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredService<LibUsbDotNetUsbHidServiceBuilder<object?>>();
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <object?>
+    >();
 
     Assert.That(
       () => builder.AddResiliencePipelineForOpenEndPoint(configure: null!),
@@ -68,21 +101,33 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
     const string ServiceKey = nameof(ServiceKey);
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      ServiceKey,
-      (builder, options) => {
-        builder.AddResiliencePipelineForOpenEndPoint(
-          new RetryStrategyOptions()
-        );
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        ServiceKey,
+        (builder, options) => {
+          builder.AddResiliencePipelineForOpenEndPoint(
+            new RetryStrategyOptions()
+          );
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
+    using var provider = services.BuildServiceProvider();
     var pipelineProvider = provider.GetRequiredKeyedService<ResiliencePipelineProvider<string>>(ServiceKey);
 
     Assert.That(
       pipelineProvider.TryGetPipeline(
-        LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+#if LIBUSBDOTNET_V3
+        LibUsbDotNetV3UsbHidDevice
+#else
+        LibUsbDotNetUsbHidDevice
+#endif
+          .ResiliencePipelineKeyForOpenEndPoint,
         out var pipeline
       ),
       Is.True

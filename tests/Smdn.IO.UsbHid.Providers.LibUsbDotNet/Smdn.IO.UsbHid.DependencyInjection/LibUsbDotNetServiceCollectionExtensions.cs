@@ -16,27 +16,63 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
   public void AddLibUsbDotNetUsbHid_ServicesNull()
   {
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid(),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        (),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid((builder, options) => { }),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ((builder, options) => { }),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid("key"),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ("key"),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid("key", (builder, options) => { }),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ("key", (builder, options) => { }),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid<string>("key", static key => key),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        <string>("key", static key => key),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
     Assert.That(
-      () => (null as IServiceCollection)!.AddLibUsbDotNetUsbHid<string>("key", static key => key, (builder, options) => { }),
+      () => (null as IServiceCollection)!
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        <string>("key", static key => key, (builder, options) => { }),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
     );
   }
@@ -47,15 +83,33 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
     var services = new ServiceCollection();
 
     Assert.That(
-      () => services.AddLibUsbDotNetUsbHid(configure: null!),
+      () => services
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        (configure: null!),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
     );
     Assert.That(
-      () => services.AddLibUsbDotNetUsbHid("key", configure: null!),
+      () => services
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ("key", configure: null!),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
     );
     Assert.That(
-      () => services.AddLibUsbDotNetUsbHid<string>("key", static key => key, configure: null!),
+      () => services
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        <string>("key", static key => key, configure: null!),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
     );
   }
@@ -66,11 +120,23 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
     var services = new ServiceCollection();
 
     Assert.That(
-      () => services.AddLibUsbDotNetUsbHid("key", selectOptionsNameForServiceKey: null!),
+      () => services
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ("key", selectOptionsNameForServiceKey: null!),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
     );
     Assert.That(
-      () => services.AddLibUsbDotNetUsbHid("key", selectOptionsNameForServiceKey: null!, (builder, options) => { }),
+      () => services
+#if LIBUSBDOTNET_V3
+        .AddLibUsbDotNetV3UsbHid
+#else
+        .AddLibUsbDotNetUsbHid
+#endif
+        ("key", selectOptionsNameForServiceKey: null!, (builder, options) => { }),
       Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
     );
   }
@@ -80,14 +146,21 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
   {
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    using var usbHidService = provider.GetService<IUsbHidService>();
+    using var provider = services.BuildServiceProvider();
+    var usbHidService = provider.GetService<IUsbHidService>();
 
     Assert.That(usbHidService, Is.Not.Null);
   }
@@ -98,15 +171,22 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
     const string ServiceKey = nameof(ServiceKey);
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      ServiceKey,
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        ServiceKey,
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    using var usbHidService = provider.GetKeyedService<IUsbHidService>(ServiceKey);
+    using var provider = services.BuildServiceProvider();
+    var usbHidService = provider.GetKeyedService<IUsbHidService>(ServiceKey);
 
     Assert.That(usbHidService, Is.Not.Null);
   }
@@ -117,16 +197,23 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
     const int ServiceKey = 1;
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      ServiceKey,
-      static key => key.ToString(provider: null),
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        ServiceKey,
+        static key => key.ToString(provider: null),
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    using var usbHidService = provider.GetKeyedService<IUsbHidService>(ServiceKey);
+    using var provider = services.BuildServiceProvider();
+    var usbHidService = provider.GetKeyedService<IUsbHidService>(ServiceKey);
 
     Assert.That(usbHidService, Is.Not.Null);
   }
@@ -138,19 +225,35 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
     var configureCalled = false;
 
     services.AddLogging();
-    services.AddLibUsbDotNetUsbHid(
-      (builder, options) => {
-        configureCalled = true;
 
-        Assert.That(builder, Is.Not.Null);
-        Assert.That(options, Is.Not.Null);
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        (builder, options) => {
+          configureCalled = true;
 
-        options.DebugLevel = LogLevel.Warning;
-      }
-    );
+          Assert.That(builder, Is.Not.Null);
+          Assert.That(options, Is.Not.Null);
 
-    var provider = services.BuildServiceProvider();
-    var resolvedOptions = provider.GetRequiredService<IOptions<LibUsbDotNetOptions>>().Value;
+          options.DebugLevel = LogLevel.Warning;
+        }
+      );
+
+    using var provider = services.BuildServiceProvider();
+    var resolvedOptions = provider.GetRequiredService<
+      IOptions<
+#if LIBUSBDOTNET_V3
+        LibUsbDotNetV3Options
+#else
+        LibUsbDotNetOptions
+#endif
+      >
+    >().Value;
 
     Assert.That(configureCalled, Is.True);
     Assert.That(resolvedOptions.DebugLevel, Is.EqualTo(LogLevel.Warning));

@@ -18,7 +18,14 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
     public void AddProvider(ILoggerProvider provider) { }
     public ILogger CreateLogger(string categoryName)
     {
-      CreateCalled = true;
+      var expectedCallerCategoryName =
+#if LIBUSBDOTNET_V3
+        typeof(LibUsbDotNetV3UsbHidDevice).FullName;
+#else
+        typeof(LibUsbDotNetUsbHidDevice).FullName;
+#endif
+
+      CreateCalled |= (categoryName == expectedCallerCategoryName);
       return NullLogger.Instance;
     }
     public void Dispose() { }
@@ -29,14 +36,28 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
   {
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredService<LibUsbDotNetUsbHidServiceBuilder<object?>>();
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <object?>
+    >();
 
     using var service = builder.Build(provider);
 
@@ -48,14 +69,28 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
   {
     var services = new ServiceCollection();
 
-    services.AddLibUsbDotNetUsbHid(
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredService<LibUsbDotNetUsbHidServiceBuilder<object?>>();
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <object?>
+    >();
 
     Assert.That(
       () => builder.Build(null!),
@@ -76,15 +111,29 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
     services.AddSingleton<ILoggerFactory>(defaultLoggerFactory);
     services.AddKeyedSingleton<ILoggerFactory>(ServiceKey, keyedLoggerFactory);
 
-    services.AddLibUsbDotNetUsbHid(
-      ServiceKey,
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        ServiceKey,
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredKeyedService<LibUsbDotNetUsbHidServiceBuilder<string>>(ServiceKey);
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredKeyedService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <string>
+    >(ServiceKey);
     using var usbHidService = builder.Build(provider);
 
     // Attempts to get the device to ensure invoking ILoggerFactory.CreateLogger.
@@ -108,14 +157,28 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
 
     services.AddSingleton<ILoggerFactory>(defaultLoggerFactory);
 
-    services.AddLibUsbDotNetUsbHid(
-      static (_, options) => {
-        options.DebugLevel = LogLevel.None;
-      }
-    );
+    services
+#if LIBUSBDOTNET_V3
+      .AddLibUsbDotNetV3UsbHid
+#else
+      .AddLibUsbNullSession()
+      .AddLibUsbDotNetUsbHid
+#endif
+      (
+        static (_, options) => {
+          options.DebugLevel = LogLevel.None;
+        }
+      );
 
-    var provider = services.BuildServiceProvider();
-    var builder = provider.GetRequiredService<LibUsbDotNetUsbHidServiceBuilder<object?>>();
+    using var provider = services.BuildServiceProvider();
+    var builder = provider.GetRequiredService<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder
+#else
+      LibUsbDotNetUsbHidServiceBuilder
+#endif
+      <object?>
+    >();
     using var usbHidService = builder.Build(provider);
 
     // Attempts to get the device to ensure invoking ILoggerFactory.CreateLogger.
