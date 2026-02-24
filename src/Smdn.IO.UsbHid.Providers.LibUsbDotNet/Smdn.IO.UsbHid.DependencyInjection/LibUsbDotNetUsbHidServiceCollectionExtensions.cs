@@ -1,5 +1,9 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if LIBUSBDOTNET_V3
+#pragma warning disable SA1649 // warning SA1649: File name should match first type name
+#endif
+
 using System;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +13,20 @@ using Polly.DependencyInjection;
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
-internal static class LibUsbDotNetUsbHidServiceCollectionExtensions {
+internal static class
+#if LIBUSBDOTNET_V3
+LibUsbDotNetV3UsbHidServiceCollectionExtensions
+#else
+LibUsbDotNetUsbHidServiceCollectionExtensions
+#endif
+{
   private static
-  LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>
+#if LIBUSBDOTNET_V3
+  LibUsbDotNetV3ResiliencePipelineKeyPair
+#else
+  LibUsbDotNetResiliencePipelineKeyPair
+#endif
+  <TServiceKey>
   CreateResiliencePipelineKeyPair<TServiceKey>(TServiceKey serviceKey, string pipelineKey)
     => new(serviceKey, pipelineKey);
 
@@ -26,7 +41,12 @@ internal static class LibUsbDotNetUsbHidServiceCollectionExtensions {
 
     services
       .AddResiliencePipeline(
-        key: LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+        key:
+#if LIBUSBDOTNET_V3
+          LibUsbDotNetV3UsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+#else
+          LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+#endif
         configure: configure
       );
 
@@ -37,7 +57,16 @@ internal static class LibUsbDotNetUsbHidServiceCollectionExtensions {
   public static IServiceCollection AddResiliencePipelineForOpenEndPoint<TServiceKey>(
     this IServiceCollection services,
     TServiceKey serviceKey,
-    Action<ResiliencePipelineBuilder, AddResiliencePipelineContext<LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>>> configure
+    Action<
+      ResiliencePipelineBuilder,
+      AddResiliencePipelineContext<
+#if LIBUSBDOTNET_V3
+        LibUsbDotNetV3ResiliencePipelineKeyPair<TServiceKey>
+#else
+        LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>
+#endif
+      >
+    > configure
   )
   {
     if (services is null)
@@ -46,7 +75,12 @@ internal static class LibUsbDotNetUsbHidServiceCollectionExtensions {
     services
       .AddResiliencePipeline(
         serviceKey: serviceKey,
-        pipelineKey: LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+        pipelineKey:
+#if LIBUSBDOTNET_V3
+          LibUsbDotNetV3UsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+#else
+          LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+#endif
         createResiliencePipelineKeyPair: CreateResiliencePipelineKeyPair,
         configure: configure
       );

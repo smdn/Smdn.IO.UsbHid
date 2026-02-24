@@ -3,25 +3,35 @@ SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="Smdn.IO.UsbHid.Providers.LibUsbDotNet-common.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.Providers.LibUsbDotNet-common.props" />
 
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix>preview1</VersionSuffix>
     <!-- <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
+    <DefineConstants>$(DefineConstants);LIBUSBDOTNET_V3</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
     <Description>
 <![CDATA[`$(AssemblyName)` is a backend provider for [Smdn.IO.UsbHid.Abstractions](https://www.nuget.org/packages/Smdn.IO.UsbHid.Abstractions)
-that utilizes the [LibUsbDotNet v2](https://github.com/LibUsbDotNet/LibUsbDotNet) library for hardware communication.
+that utilizes the [LibUsbDotNet v3-alpha](https://github.com/LibUsbDotNet/LibUsbDotNet) library for hardware communication.
 It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `LibUsbDotNet` implementation.
+
+Note: **This package is released as a pre-release version.**
+The API and implementation of this library itself are at a GA-equivalent level.
+However, since the currently released LibUsbDotNet v3 is still an alpha version,
+this package is also released as a pre-release version due to NuGet restrictions.
 ]]>
     </Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibUsbDotNet" Version="2.2.75" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.DependencyInjection\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibUsbDotNet" Version="3.0.167-alpha" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,16 +1,18 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if LIBUSBDOTNET_V3
+#error This file was written for LibUsbDotNet v2. It cannot be built for v3.
+#endif
+
 using System;
 using System.Collections.Generic;
-#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
-using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using LibUsbDotNet;
-using LibUsbDotNet.LibUsb;
+using LibUsbDotNet.Descriptors;
+using LibUsbDotNet.Main;
 
 using Microsoft.Extensions.Logging;
 
@@ -29,21 +31,20 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
 
   private readonly ResiliencePipelineProvider<string>? resiliencePipelineProvider;
   private readonly ILoggerFactory? loggerFactory;
-  private UsbContext context;
 
   public LibUsbDotNetUsbHidService(
     LibUsbDotNetOptions options,
+    ILibUsbSession libUsbSession,
     ResiliencePipelineProvider<string>? resiliencePipelineProvider,
     ILoggerFactory? loggerFactory
   )
   {
     Options = options ?? throw new ArgumentNullException(nameof(options));
 
+    libUsbSession.Initialize(options);
+
     this.loggerFactory = loggerFactory;
     this.resiliencePipelineProvider = resiliencePipelineProvider;
-
-    context = new UsbContext();
-    context.SetDebugLevel(Options.LibUsbDotNetDebugLevel);
   }
 
   /// <inheritdoc/>
@@ -51,15 +52,17 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
     CancellationToken cancellationToken = default
   )
   {
-    ThrowIfDisposed();
-
     cancellationToken.ThrowIfCancellationRequested();
 
-    var deviceList = context.List();
-    var list = new List<IUsbHidDevice>(capacity: deviceList.Count);
+    var list = new List<IUsbHidDevice>(); // TODO: best initial capacity
 
-    foreach (var device in deviceList.OfType<UsbDevice>()) {
-      if (device.Configs.SelectMany(c => c.Interfaces).Any(i => i.Class == ClassCode.Hid)) {
+    foreach (UsbRegistry registry in UsbDevice.AllDevices) {
+#pragma warning disable CA2000
+      if (!registry.Open(out var device))
+        continue;
+#pragma warning restore CA2000
+
+      if (device.Configs.SelectMany(static c => c.InterfaceInfoList).Any(static i => i.Descriptor.Class == ClassCodeType.Hid)) {
         list.Add(
           new LibUsbDotNetUsbHidDevice(
             service: this,
@@ -74,35 +77,15 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
     return list;
   }
 
-#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
-  [MemberNotNull(nameof(context))]
-#endif
-  private void ThrowIfDisposed()
-  {
-    if (context is null)
-      throw new ObjectDisposedException(GetType().FullName);
-  }
-
   /// <inheritdoc/>
   public void Dispose()
   {
-    context.Dispose();
-    context = null!;
+    // nothing to do
   }
 
   /// <inheritdoc/>
-  /// <remarks>
-  /// This implementation performs a synchronous disposal, as the
-  /// underlying <see cref="UsbContext"/> does not support asynchronous disposal.
-  /// </remarks>
   public ValueTask DisposeAsync()
-  {
-    // UsbContext does not implement IAsyncDisposable
-    context.Dispose();
-    context = null!;
-
-    return default;
-  }
+    => default; // nothing to do
 
   public override string? ToString()
     => GetType().Assembly.GetName().Name;

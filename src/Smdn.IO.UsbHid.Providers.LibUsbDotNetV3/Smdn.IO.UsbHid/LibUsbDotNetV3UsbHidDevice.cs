@@ -1,9 +1,5 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if LIBUSBDOTNET_V3
-#error This file was written for LibUsbDotNet v2. It cannot be built for v3.
-#endif
-
 using System;
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
@@ -13,8 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using LibUsbDotNet;
-using LibUsbDotNet.Descriptors;
 using LibUsbDotNet.Info;
+using LibUsbDotNet.LibUsb;
 using LibUsbDotNet.Main;
 
 using Microsoft.Extensions.Logging;
@@ -31,15 +27,15 @@ namespace Smdn.IO.UsbHid;
 /// An implementation of <see cref="IUsbHidDevice"/> that uses
 /// <see cref="UsbDevice"/> of LibUsbDotNet as the backend.
 /// </summary>
-public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> {
+public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice> {
   /// <summary>
   /// Gets the key to retrieve the <see cref="ResiliencePipeline"/> for the
   /// <see cref="OpenEndPointAsync(bool, bool, bool, CancellationToken)"/> method
   /// from the <see cref="ResiliencePipelineProvider{TKey}"/>.
   /// </summary>
-  public static string ResiliencePipelineKeyForOpenEndPoint { get; } = nameof(LibUsbDotNetUsbHidDevice) + "." + nameof(resiliencePipelineOpenEndPoint);
+  public static string ResiliencePipelineKeyForOpenEndPoint { get; } = nameof(LibUsbDotNetV3UsbHidDevice) + "." + nameof(resiliencePipelineOpenEndPoint);
 
-  private readonly LibUsbDotNetUsbHidService service;
+  private readonly LibUsbDotNetV3UsbHidService service;
 
   private UsbDevice? deviceImplementation;
 
@@ -48,16 +44,16 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   public UsbDevice DeviceImplementation => deviceImplementation ?? throw new ObjectDisposedException(GetType().FullName);
 
   /// <inheritdoc/>
-  public int VendorId => DeviceImplementation.Info.Descriptor.VendorID;
+  public int VendorId => DeviceImplementation.VendorId;
 
   /// <inheritdoc/>
-  public int ProductId => DeviceImplementation.Info.Descriptor.ProductID;
+  public int ProductId => DeviceImplementation.ProductId;
 
   private readonly ResiliencePipeline resiliencePipelineOpenEndPoint;
   private readonly ILogger logger;
 
-  internal LibUsbDotNetUsbHidDevice(
-    LibUsbDotNetUsbHidService service,
+  internal LibUsbDotNetV3UsbHidDevice(
+    LibUsbDotNetV3UsbHidService service,
     UsbDevice device,
     ResiliencePipelineProvider<string>? resiliencePipelineProvider,
     ILogger? logger
@@ -96,10 +92,10 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   {
     productName = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.Open())
+    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
       return false;
 
-    return (productName = DeviceImplementation.Info.ProductString) is not null;
+    return (productName = DeviceImplementation.Descriptor.Product) is not null;
   }
 
   /// <inheritdoc/>
@@ -115,10 +111,10 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   {
     manufacturer = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.Open())
+    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
       return false;
 
-    return (manufacturer = DeviceImplementation.Info.ManufacturerString) is not null;
+    return (manufacturer = DeviceImplementation.Descriptor.Manufacturer) is not null;
   }
 
   /// <inheritdoc/>
@@ -134,10 +130,10 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   {
     serialNumber = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.Open())
+    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
       return false;
 
-    return (serialNumber = DeviceImplementation.Info.SerialString) is not null;
+    return (serialNumber = DeviceImplementation.Descriptor.SerialNumber) is not null;
   }
 
   /// <inheritdoc/>
@@ -147,12 +143,12 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
 #endif
     out string? deviceIdentifier
   )
-    => (deviceIdentifier = DeviceImplementation.DevicePath) is not null;
+    => (deviceIdentifier = DeviceImplementation.LocationId.ToString()) is not null;
 
   /// <inheritdoc/>
   public void Dispose()
   {
-    _ = deviceImplementation?.Close();
+    deviceImplementation?.Dispose();
     deviceImplementation = null;
   }
 
@@ -164,13 +160,13 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   public ValueTask DisposeAsync()
   {
     // UsbDevice does not implement IAsyncDisposable
-    _ = deviceImplementation?.Close();
+    deviceImplementation?.Dispose();
     deviceImplementation = null;
 
     return default;
   }
 
-  private LibUsbDotNetUsbHidEndPoint OpenEndPointCore(
+  private LibUsbDotNetV3UsbHidEndPoint OpenEndPointCore(
     bool openOutEndPoint,
     bool openInEndPoint,
     bool shouldDisposeDevice,
@@ -192,16 +188,12 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
     const byte AttributesTransferTypeMask   = 0b_0000_0011;
 
     foreach (var cfg in DeviceImplementation.Configs) {
-      foreach (var iface in cfg.InterfaceInfoList) {
-        if (iface.Descriptor.Class == ClassCodeType.Hid) {
+      foreach (var iface in cfg.Interfaces) {
+        if (iface.Class == ClassCode.Hid) {
           config = cfg;
           hidInterface = iface;
-          outEndpoint = iface.EndpointInfoList.FirstOrDefault(
-            static ep => (ep.Descriptor.EndpointID & EndpointAddressInOutBitMask) == EndpointAddressOut
-          );
-          inEndpoint = iface.EndpointInfoList.FirstOrDefault(
-            static ep => (ep.Descriptor.EndpointID & EndpointAddressInOutBitMask) == EndpointAddressIn
-          );
+          outEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressOut);
+          inEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressIn);
 
           break;
         }
@@ -220,7 +212,7 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
     if (openInEndPoint && inEndpoint is null)
       throw new UsbHidException("HID IN endpoint not found");
 
-    LogUsbHidOpenEndPointAttemptToOpen(hidInterface.Descriptor.InterfaceID, hidInterface.InterfaceString);
+    LogUsbHidOpenEndPointAttemptToOpen(hidInterface.Number, hidInterface.Interface);
 
     cancellationToken.ThrowIfCancellationRequested();
 
@@ -228,26 +220,28 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
       DeviceImplementation.Open();
 
     // try set configuration
-    if (DeviceImplementation is IUsbDevice wholeUsbDevice) {
-      foreach (var cfg in new byte[] { config.Descriptor.ConfigID, 0 /* fallback */ }) {
-        try {
-          if (!wholeUsbDevice.SetConfiguration(cfg))
-            continue;
-        }
-        catch (Exception ex) {
-          LogUsbHidOpenEndPointSetConfigurationFailed(ex, hidInterface.Descriptor.InterfaceID, hidInterface.InterfaceString, cfg);
-          throw; // unexpected
-        }
-      }
-
-      // try claim HID interface
+    foreach (var cfg in new[] { config.ConfigurationValue, 0 /* fallback */ }) {
       try {
-        wholeUsbDevice.ClaimInterface(hidInterface.Descriptor.InterfaceID);
+        DeviceImplementation.SetConfiguration(cfg);
+      }
+      catch (UsbException ex) when (ex.ErrorCode == Error.Busy) {
+        // [LibUsbDotNet 3.0.87-alpha] SetConfiguration always throw UsbException with Error.Busy
+        LogUsbHidOpenEndPointSetConfigurationBusy(ex, hidInterface.Number, hidInterface.Interface, cfg);
+        continue; // expected, continue
       }
       catch (Exception ex) {
-        LogUsbHidOpenEndPointClaimInterfaceFailed(ex, hidInterface.Descriptor.InterfaceID, hidInterface.InterfaceString);
-        throw;
+        LogUsbHidOpenEndPointSetConfigurationFailed(ex, hidInterface.Number, hidInterface.Interface, cfg);
+        throw; // unexpected
       }
+    }
+
+    // try claim HID interface
+    try {
+      DeviceImplementation.ClaimInterface(hidInterface.Number);
+    }
+    catch (Exception ex) {
+      LogUsbHidOpenEndPointClaimInterfaceFailed(ex, hidInterface.Number, hidInterface.Interface);
+      throw;
     }
 
     // open HID endpoint
@@ -255,23 +249,23 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
       device: this,
       endPointWriter: openOutEndPoint
         ? DeviceImplementation.OpenEndpointWriter(
-            writeEndpointID: (WriteEndpointID)outEndpoint!.Descriptor.EndpointID,
-            endpointType: (EndpointType)(outEndpoint.Descriptor.Attributes & AttributesTransferTypeMask)
+            writeEndpointID: (WriteEndpointID)outEndpoint!.EndpointAddress,
+            endpointType: (EndpointType)(outEndpoint.Attributes & AttributesTransferTypeMask)
           )
         : null,
       maxOutEndPointPacketSize: openInEndPoint
-        ? outEndpoint!.Descriptor.MaxPacketSize
+        ? outEndpoint!.MaxPacketSize
         : 0,
       writeEndPointTimeout: service.Options.WriteEndPointTimeout,
       endPointReader: openInEndPoint
         ? DeviceImplementation.OpenEndpointReader(
             readBufferSize: service.Options.ReadEndPointBufferSize,
-            readEndpointID: (ReadEndpointID)inEndpoint!.Descriptor.EndpointID,
-            endpointType: (EndpointType)(inEndpoint.Descriptor.Attributes & AttributesTransferTypeMask)
+            readEndpointID: (ReadEndpointID)inEndpoint!.EndpointAddress,
+            endpointType: (EndpointType)(inEndpoint.Attributes & AttributesTransferTypeMask)
           )
         : null,
       maxInEndPointPacketSize: openInEndPoint
-        ? inEndpoint!.Descriptor.MaxPacketSize
+        ? inEndpoint!.MaxPacketSize
         : 0,
       readEndPointTimeout: service.Options.ReadEndPointTimeout,
       shouldDisposeDevice: shouldDisposeDevice

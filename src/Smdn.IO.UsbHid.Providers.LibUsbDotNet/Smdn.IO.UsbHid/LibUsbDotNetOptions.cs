@@ -1,6 +1,13 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if LIBUSBDOTNET_V3
+#error This file was written for LibUsbDotNet v2. It cannot be built for v3.
+#endif
+
 using System;
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+using System.Runtime.InteropServices;
+#endif
 
 using Microsoft.Extensions.Logging;
 
@@ -33,14 +40,39 @@ public sealed class LibUsbDotNetOptions {
 #pragma warning restore SA1513
 #pragma warning restore IDE0360
 
-  internal LibUsbDotNet.LogLevel LibUsbDotNetDebugLevel => DebugLevel switch {
-    LogLevel.Trace or LogLevel.Debug => LibUsbDotNet.LogLevel.Debug,
-    LogLevel.Information => LibUsbDotNet.LogLevel.Info,
-    LogLevel.Warning => LibUsbDotNet.LogLevel.Warning,
-    LogLevel.Error => LibUsbDotNet.LogLevel.Error,
-    LogLevel.Critical => LibUsbDotNet.LogLevel.Error,
-    LogLevel.None or _ => LibUsbDotNet.LogLevel.None,
+  internal int LibUsbDebugLevel => DebugLevel switch {
+    LogLevel.Trace or LogLevel.Debug => 3,
+    LogLevel.Information => 3,
+    LogLevel.Warning => 2,
+    LogLevel.Error => 1,
+    LogLevel.Critical => 1,
+    LogLevel.None or _ => 0,
   };
+
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+  /// <summary>
+  /// Gets or sets the library path for <c>libusb-1.0</c> referenced in native API calls.
+  /// If a non-<see langword="null"/> null or non-empty string is specified, configure the
+  /// default resolver that resolves to this path using <see cref="NativeLibrary.SetDllImportResolver"/>.
+  /// </summary>
+  /// <remarks>
+  /// If the <see cref="LibUsbDllImportResolver"/> property is set to a value other than <see langword="null"/>,
+  /// that resolver will be used prioritized.
+  /// </remarks>
+  /// <seealso cref="LibUsbDllImportResolver"/>
+  public string? LibUsbLibraryPath { get; set; }
+
+  /// <summary>
+  /// Gets or sets the <see cref="DllImportResolver"/> for <c>libusb-1.0</c> referenced in native API calls.
+  /// If a non-<see langword="null"/> value is specified, it is registered as the resolver
+  /// that resolves <c>libusb-1.0</c> using <see cref="NativeLibrary.SetDllImportResolver"/>.
+  /// </summary>
+  /// <remarks>
+  /// The setting of this property is prioritized over the setting of <see cref="LibUsbLibraryPath"/>.
+  /// </remarks>
+  /// <seealso cref="LibUsbLibraryPath"/>
+  public DllImportResolver? LibUsbDllImportResolver { get; set; }
+#endif
 
   /// <summary>
   /// Configure this instance to have the same values as the instance passed as an argument.
@@ -60,6 +92,10 @@ public sealed class LibUsbDotNetOptions {
       throw new ArgumentNullException(nameof(baseOptions));
 
     DebugLevel = baseOptions.DebugLevel;
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+    LibUsbLibraryPath = baseOptions.LibUsbLibraryPath;
+    LibUsbDllImportResolver = baseOptions.LibUsbDllImportResolver;
+#endif
 
     return this;
   }

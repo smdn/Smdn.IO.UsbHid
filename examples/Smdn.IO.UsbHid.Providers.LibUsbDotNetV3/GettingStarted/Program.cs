@@ -6,18 +6,15 @@ using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
 
-// Register the IUsbHidService using LibUsbDotNet v2 as the implementation provider
-services.AddLibUsbDotNetUsbHid(
+// Register the IUsbHidService using LibUsbDotNet v3 (alpha) as the implementation provider
+services.AddLibUsbDotNetV3UsbHid(
   configure: static (builder, options) => {
     // Specify the log level for output to stdout by libusb native library
     options.DebugLevel = LogLevel.Information;
-    // If loading libusb-1.0 fails, check the filename or full path to the .so or
-    // .dylib file installed on your system and specify it with this option.
-    options.LibUsbLibraryPath = "libusb-1.0.so.0";
   }
 );
 
-using var serviceProvider = services.BuildServiceProvider();
+var serviceProvider = services.BuildServiceProvider();
 
 // Request IUsbHidService from IServiceProvider
 var usbHidService = serviceProvider.GetRequiredService<IUsbHidService>();

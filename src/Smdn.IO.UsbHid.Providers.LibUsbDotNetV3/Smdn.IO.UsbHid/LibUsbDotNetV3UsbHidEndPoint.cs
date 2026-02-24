@@ -1,15 +1,13 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if LIBUSBDOTNET_V3
-#error This file was written for LibUsbDotNet v2. It cannot be built for v3.
-#endif
 
 using System;
 using System.Buffers;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using LibUsbDotNet;
+using LibUsbDotNet.LibUsb;
 
 namespace Smdn.IO.UsbHid;
 
@@ -18,10 +16,10 @@ namespace Smdn.IO.UsbHid;
 /// <see cref="UsbEndpointReader"/> and <see cref="UsbEndpointWriter"/> of
 /// LibUsbDotNet as the backend.
 /// </summary>
-public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
+public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
   private readonly bool shouldDisposeDevice;
 
-  private LibUsbDotNetUsbHidDevice? device;
+  private LibUsbDotNetV3UsbHidDevice? device;
 
   /// <inheritdoc/>
   public IUsbHidDevice Device => device ?? throw new ObjectDisposedException(GetType().Name);
@@ -48,8 +46,8 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
   private readonly int writeEndPointTimeoutInMilliseconds;
   private readonly int readEndPointTimeoutInMilliseconds;
 
-  internal LibUsbDotNetUsbHidEndPoint(
-    LibUsbDotNetUsbHidDevice device,
+  internal LibUsbDotNetV3UsbHidEndPoint(
+    LibUsbDotNetV3UsbHidDevice device,
     UsbEndpointWriter? endPointWriter,
     int maxOutEndPointPacketSize,
     TimeSpan writeEndPointTimeout,
@@ -149,15 +147,16 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
       int timeout
     )
     {
+      // since UsbEndpointWriter.Write() requires Span<byte> rather than ReadOnlySpan<byte>,
+      // copy the data to be written into a separately allocated Span<byte>
       var rentBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+      var buf = rentBuffer.AsSpan(0, buffer.Length);
 
-      buffer.CopyTo(rentBuffer.AsSpan());
+      buffer.CopyTo(buf);
 
       try {
         _ = writer.Write(
-          buffer: rentBuffer,
-          offset: 0,
-          count: buffer.Length,
+          buffer: buf,
           timeout: timeout,
           transferLength: out var transferLength
         );
@@ -171,20 +170,61 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
 
   /// <inheritdoc/>
   /// <remarks>
-  /// <para>
   /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
   /// because the underlying LibUsbDotNet API does not require it.
-  /// </para>
-  /// <para>
-  /// This implementation performs a synchronous write, as the underlying
-  /// <see cref="UsbEndpointWriter"/> does not support asynchronous operations.
-  /// </para>
   /// </remarks>
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
-    Write(buffer.Span, cancellationToken);
+    if (buffer.IsEmpty)
+      return default;
 
-    return default;
+    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+
+    if (maxOutEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
+
+    ThrowIfDisposed();
+
+    if (WriteEndPoint is null)
+      throw new InvalidOperationException("can not write");
+
+    cancellationToken.ThrowIfCancellationRequested();
+
+    return WriteAsyncCore(
+      WriteEndPoint,
+      buffer,
+      writeEndPointTimeoutInMilliseconds
+    );
+
+    static async ValueTask WriteAsyncCore(
+      UsbEndpointWriter writer,
+      ReadOnlyMemory<byte> buffer,
+      int timeout
+    )
+    {
+      byte[]? rentBuffer = null;
+
+      if (!MemoryMarshal.TryGetArray(buffer, out var bufferSegment)) {
+        rentBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+
+        bufferSegment = new ArraySegment<byte>(rentBuffer, 0, buffer.Length);
+
+        buffer.CopyTo(bufferSegment.AsMemory(0, buffer.Length));
+      }
+
+      try {
+        _ = await writer.WriteAsync(
+          buffer: bufferSegment.Array,
+          offset: bufferSegment.Offset,
+          length: bufferSegment.Count,
+          timeout: timeout
+        ).ConfigureAwait(false);
+      }
+      finally {
+        if (rentBuffer is not null)
+          ArrayPool<byte>.Shared.Return(rentBuffer);
+      }
+    }
   }
 
   /// <inheritdoc/>
@@ -205,65 +245,67 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
     ThrowIfDisposed();
 
     if (ReadEndPoint is null)
-      throw new InvalidOperationException("can not read");
+      throw new InvalidOperationException("can not write");
 
     cancellationToken.ThrowIfCancellationRequested();
 
-    return ReadCore(
+    _ = ReadEndPoint.Read(
+      buffer: buffer,
+      timeout: readEndPointTimeoutInMilliseconds,
+      out var transferLength
+    );
+
+    return transferLength;
+  }
+
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
+  /// because the underlying LibUsbDotNet API does not require it.
+  /// </remarks>
+  public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
+  {
+    if (buffer.IsEmpty) {
+      return
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
+        ValueTask.FromResult(result: 0);
+#else
+        new(result: 0);
+#endif
+    }
+
+    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+
+    if (maxInEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
+
+    ThrowIfDisposed();
+
+    if (ReadEndPoint is null)
+      throw new InvalidOperationException("can not write");
+
+    cancellationToken.ThrowIfCancellationRequested();
+
+    return ReadAsyncCore(
       ReadEndPoint,
       buffer,
       readEndPointTimeoutInMilliseconds
     );
 
-    static int ReadCore(
+    static async ValueTask<int> ReadAsyncCore(
       UsbEndpointReader reader,
-      Span<byte> buffer,
+      Memory<byte> buffer,
       int timeout
     )
     {
-      var rentBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+      var (_, transferLength) = await reader.ReadAsync(
+        buffer: buffer,
+        timeout: timeout
+      ).ConfigureAwait(false);
 
-      try {
-        _ = reader.Read(
-          buffer: rentBuffer,
-          offset: 0,
-          count: buffer.Length,
-          timeout: timeout,
-          out var transferLength
-        );
-
-        rentBuffer.AsSpan(0, transferLength).CopyTo(buffer);
-
-        return transferLength;
-      }
-      finally {
-        if (rentBuffer is not null)
-          ArrayPool<byte>.Shared.Return(rentBuffer);
-      }
+      return transferLength;
     }
   }
-
-  /// <inheritdoc/>
-  /// <remarks>
-  /// <para>
-  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
-  /// </para>
-  /// <para>
-  /// This implementation performs a synchronous write, as the underlying
-  /// <see cref="UsbEndpointReader"/> does not support asynchronous operations.
-  /// </para>
-  /// </remarks>
-  public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
-#pragma warning disable SA1114
-#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
-    => ValueTask.FromResult<int>(
-#else
-    => new(
-#endif
-#pragma warning disable CA2000
-      result: Read(buffer.Span, cancellationToken)
-    );
 
   public override string? ToString()
     => $"{GetType().FullName} (Device='{device}', ReadEndPoint='{ReadEndPoint}', WriteEndPoint='{WriteEndPoint}')";

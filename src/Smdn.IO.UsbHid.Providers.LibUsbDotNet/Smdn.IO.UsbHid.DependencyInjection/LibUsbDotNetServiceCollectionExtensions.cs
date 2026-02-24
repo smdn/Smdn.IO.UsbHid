@@ -1,16 +1,36 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable SA1008, SA1110
+
+#if LIBUSBDOTNET_V3
+#pragma warning disable SA1649 // warning SA1649: File name should match first type name
+#endif
+
 using System;
 
 using Microsoft.Extensions.DependencyInjection;
+#if !LIBUSBDOTNET_V3
+using Microsoft.Extensions.DependencyInjection.Extensions;
+#endif
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
-public static class LibUsbDotNetServiceCollectionExtensions {
+public static class
+#if LIBUSBDOTNET_V3
+LibUsbDotNetV3ServiceCollectionExtensions
+#else
+LibUsbDotNetServiceCollectionExtensions
+#endif
+{
 #pragma warning disable IDE0060
   private static void ConfigureNothing<TServiceKey>(
+#if LIBUSBDOTNET_V3
+    LibUsbDotNetV3UsbHidServiceBuilder<TServiceKey> builder,
+    LibUsbDotNetV3Options options
+#else
     LibUsbDotNetUsbHidServiceBuilder<TServiceKey> builder,
     LibUsbDotNetOptions options
+#endif
   )
   {
     // do nothing
@@ -18,10 +38,21 @@ public static class LibUsbDotNetServiceCollectionExtensions {
 #pragma warning restore IDE0060
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  (
     this IServiceCollection services
   )
-    => AddLibUsbDotNetUsbHid<object?>(
+#if LIBUSBDOTNET_V3
+    => AddLibUsbDotNetV3UsbHid
+#else
+    => AddLibUsbDotNetUsbHid
+#endif
+    <object?>(
       services: services ?? throw new ArgumentNullException(nameof(services)),
       serviceKey: null,
       selectOptionsNameForServiceKey: static _ => string.Empty /* Options.DefaultName */,
@@ -29,11 +60,30 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     );
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  (
     this IServiceCollection services,
-    Action<LibUsbDotNetUsbHidServiceBuilder<object?>, LibUsbDotNetOptions> configure
+    Action<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder<object?>,
+      LibUsbDotNetV3Options
+#else
+      LibUsbDotNetUsbHidServiceBuilder<object?>,
+      LibUsbDotNetOptions
+#endif
+    > configure
   )
-    => AddLibUsbDotNetUsbHid(
+#if LIBUSBDOTNET_V3
+    => AddLibUsbDotNetV3UsbHid
+#else
+    => AddLibUsbDotNetUsbHid
+#endif
+    (
       services: services ?? throw new ArgumentNullException(nameof(services)),
       serviceKey: null,
       selectOptionsNameForServiceKey: static _ => string.Empty /* Options.DefaultName */,
@@ -41,11 +91,22 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     );
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  (
     this IServiceCollection services,
     string serviceKey
   )
-    => AddLibUsbDotNetUsbHid(
+#if LIBUSBDOTNET_V3
+    => AddLibUsbDotNetV3UsbHid
+#else
+    => AddLibUsbDotNetUsbHid
+#endif
+    (
       services: services ?? throw new ArgumentNullException(nameof(services)),
       serviceKey: serviceKey,
       selectOptionsNameForServiceKey: static key => key,
@@ -53,12 +114,31 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     );
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  (
     this IServiceCollection services,
     string serviceKey,
-    Action<LibUsbDotNetUsbHidServiceBuilder<string>, LibUsbDotNetOptions> configure
+    Action<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder<string>,
+      LibUsbDotNetV3Options
+#else
+      LibUsbDotNetUsbHidServiceBuilder<string>,
+      LibUsbDotNetOptions
+#endif
+    > configure
   )
-    => AddLibUsbDotNetUsbHid(
+#if LIBUSBDOTNET_V3
+    => AddLibUsbDotNetV3UsbHid
+#else
+    => AddLibUsbDotNetUsbHid
+#endif
+    (
       services: services ?? throw new ArgumentNullException(nameof(services)),
       serviceKey: serviceKey,
       selectOptionsNameForServiceKey: static key => key,
@@ -66,12 +146,24 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     );
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid<TServiceKey>(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  <TServiceKey>
+  (
     this IServiceCollection services,
     TServiceKey serviceKey,
     Func<TServiceKey, string?> selectOptionsNameForServiceKey
   )
-    => AddLibUsbDotNetUsbHid(
+#if LIBUSBDOTNET_V3
+    => AddLibUsbDotNetV3UsbHid
+#else
+    => AddLibUsbDotNetUsbHid
+#endif
+    (
       services: services ?? throw new ArgumentNullException(nameof(services)),
       serviceKey: serviceKey,
       selectOptionsNameForServiceKey: selectOptionsNameForServiceKey ?? throw new ArgumentNullException(nameof(selectOptionsNameForServiceKey)),
@@ -79,11 +171,26 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     );
 
   [CLSCompliant(false)]
-  public static IServiceCollection AddLibUsbDotNetUsbHid<TServiceKey>(
+  public static IServiceCollection
+#if LIBUSBDOTNET_V3
+  AddLibUsbDotNetV3UsbHid
+#else
+  AddLibUsbDotNetUsbHid
+#endif
+  <TServiceKey>
+  (
     this IServiceCollection services,
     TServiceKey serviceKey,
     Func<TServiceKey, string?> selectOptionsNameForServiceKey,
-    Action<LibUsbDotNetUsbHidServiceBuilder<TServiceKey>, LibUsbDotNetOptions> configure
+    Action<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder<TServiceKey>,
+      LibUsbDotNetV3Options
+#else
+      LibUsbDotNetUsbHidServiceBuilder<TServiceKey>,
+      LibUsbDotNetOptions
+#endif
+    > configure
   )
   {
     if (services is null)
@@ -93,19 +200,45 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     if (configure is null)
       throw new ArgumentNullException(nameof(configure));
 
-    var builder = new LibUsbDotNetUsbHidServiceBuilder<TServiceKey>(
-      services,
-      serviceKey,
-      selectOptionsNameForServiceKey
-    );
-    var configuredOptions = new LibUsbDotNetOptions();
+    var builder = new
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3UsbHidServiceBuilder<TServiceKey>
+#else
+      LibUsbDotNetUsbHidServiceBuilder<TServiceKey>
+#endif
+      (
+        services,
+        serviceKey,
+        selectOptionsNameForServiceKey
+      );
+    var configuredOptions = new
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3Options();
+#else
+      LibUsbDotNetOptions();
+#endif
 
     configure(builder, configuredOptions);
 
-    _ = services.Configure<LibUsbDotNetOptions>(
+    _ = services.Configure<
+#if LIBUSBDOTNET_V3
+      LibUsbDotNetV3Options
+#else
+      LibUsbDotNetOptions
+#endif
+    >(
       name: builder.GetOptionsName(),
       configureOptions: options => options.Configure(configuredOptions)
     );
+
+#if !LIBUSBDOTNET_V3
+    // register ILibUsbSession as non-keyed singleton service to be shared
+    // across all IUsbHidService instances
+    //
+    // if an ILibUsbSession implementation has not been explicitly registered
+    // prior to this, register LibUsbDefaultSession as the ILibUsbSession implementation
+    services.TryAddSingleton<ILibUsbSession, LibUsbDefaultSession>();
+#endif
 
     services.Add(
       ServiceDescriptor.KeyedSingleton/* <LibUsbDotNetServiceBuilder<TServiceKey>> */(
@@ -119,7 +252,13 @@ public static class LibUsbDotNetServiceCollectionExtensions {
         serviceKey: builder.ServiceKey,
         static (serviceProvider, serviceKey)
           => serviceProvider
-            .GetRequiredKeyedService<LibUsbDotNetUsbHidServiceBuilder<TServiceKey>>(serviceKey)
+            .GetRequiredKeyedService<
+#if LIBUSBDOTNET_V3
+              LibUsbDotNetV3UsbHidServiceBuilder<TServiceKey>
+#else
+              LibUsbDotNetUsbHidServiceBuilder<TServiceKey>
+#endif
+            >(serviceKey)
             .Build(serviceProvider)
       )
     );

@@ -11,7 +11,7 @@ using Smdn.IO.UsbHid.DependencyInjection;
 var services = new ServiceCollection();
 
 services
-  .AddLibUsbDotNetUsbHid(
+  .AddLibUsbDotNetV3UsbHid(
     configure: (builder, options) => {
       // Add a Polly resilience pipeline used when opening HID device endpoints
       builder.AddResiliencePipelineForOpenEndPoint(
@@ -27,8 +27,8 @@ services
   .AddLogging(
     builder => builder
       .AddSimpleConsole(static options => options.SingleLine = true)
-      // Specifies the log level output by LibUsbDotNetUsbHidDevice
-      .AddFilter(typeof(LibUsbDotNetUsbHidDevice).FullName, LogLevel.Debug)
+      // Specifies the log level output by LibUsbDotNetV3UsbHidDevice
+      .AddFilter(typeof(LibUsbDotNetV3UsbHidDevice).FullName, LogLevel.Debug)
       // Specifies the log level output by Polly
       .AddFilter("Polly", LogLevel.Warning)
   );

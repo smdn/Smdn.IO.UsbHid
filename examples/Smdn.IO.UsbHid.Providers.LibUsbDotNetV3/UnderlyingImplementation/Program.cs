@@ -9,7 +9,7 @@ using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
 
-services.AddLibUsbDotNetUsbHid();
+services.AddLibUsbDotNetV3UsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 var usbHidService = serviceProvider.GetRequiredService<IUsbHidService>();
@@ -21,17 +21,16 @@ using IUsbHidDevice d = usbHidService.GetDevices(VendorId, ProductId).First();
 
 // By casting from `IUsbHidDevice` to `IUsbHidDevice<TDevice>`,
 // the implementation type of the backend library becomes accessible.
-var device = (IUsbHidDevice<LibUsbDotNet.UsbDevice>)d;
+var device = (IUsbHidDevice<LibUsbDotNet.LibUsb.UsbDevice>)d;
 
 // It is possible to access the UsbDevice object via the
 // DeviceImplementation property when using LibUsbDotNet.
 // This allows you to access LibUsbDotNet-specific APIs.
-LibUsbDotNet.UsbDevice usbDevice = device.DeviceImplementation;
+LibUsbDotNet.LibUsb.UsbDevice usbDevice = device.DeviceImplementation;
 
-if (usbDevice.Open()) {
-  Console.WriteLine("DevicePath: {0}", usbDevice.DevicePath);
-  Console.WriteLine("Product: {0}", usbDevice.Info.ProductString);
-  Console.WriteLine("Manufacturer: {0}", usbDevice.Info.ManufacturerString);
-  Console.WriteLine("SerialNumber: {0}", usbDevice.Info.SerialString);
-}
+usbDevice.TryOpen();
 
+Console.WriteLine("LocationId: {0}", usbDevice.LocationId);
+Console.WriteLine("Product: {0}", usbDevice.Descriptor.Product);
+Console.WriteLine("Manufacturer: {0}", usbDevice.Descriptor.Manufacturer);
+Console.WriteLine("SerialNumber: {0}", usbDevice.Descriptor.SerialNumber);
