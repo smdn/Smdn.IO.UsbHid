@@ -245,7 +245,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     ThrowIfDisposed();
 
     if (ReadEndPoint is null)
-      throw new InvalidOperationException("can not write");
+      throw new InvalidOperationException("can not read");
 
     cancellationToken.ThrowIfCancellationRequested();
 
@@ -282,7 +282,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     ThrowIfDisposed();
 
     if (ReadEndPoint is null)
-      throw new InvalidOperationException("can not write");
+      throw new InvalidOperationException("can not read");
 
     cancellationToken.ThrowIfCancellationRequested();
 
