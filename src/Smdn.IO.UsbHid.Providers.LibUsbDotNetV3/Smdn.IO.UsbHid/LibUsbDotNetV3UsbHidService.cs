@@ -59,7 +59,7 @@ internal sealed class LibUsbDotNetV3UsbHidService : IUsbHidService {
     var list = new List<IUsbHidDevice>(capacity: deviceList.Count);
 
     foreach (var device in deviceList.OfType<UsbDevice>()) {
-      if (device.Configs.SelectMany(c => c.Interfaces).Any(i => i.Class == ClassCode.Hid)) {
+      if (device.Configs.SelectMany(static c => c.Interfaces).Any(static i => i.Class == ClassCode.Hid)) {
         list.Add(
           new LibUsbDotNetV3UsbHidDevice(
             service: this,

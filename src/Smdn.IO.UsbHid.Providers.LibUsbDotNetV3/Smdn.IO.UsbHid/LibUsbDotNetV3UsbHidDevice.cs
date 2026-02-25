@@ -192,8 +192,12 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
         if (iface.Class == ClassCode.Hid) {
           config = cfg;
           hidInterface = iface;
-          outEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressOut);
-          inEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressIn);
+          outEndpoint = iface.Endpoints.FirstOrDefault(
+            static ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressOut
+          );
+          inEndpoint = iface.Endpoints.FirstOrDefault(
+            static ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressIn
+          );
 
           break;
         }
