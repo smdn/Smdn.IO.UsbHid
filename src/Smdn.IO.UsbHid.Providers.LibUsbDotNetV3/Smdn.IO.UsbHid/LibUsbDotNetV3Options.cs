@@ -16,11 +16,6 @@ public sealed class LibUsbDotNetV3Options {
 
 #pragma warning disable IDE0360 // Property accessor can be simplified
 #pragma warning disable SA1513 // Closing brace should be followed by blank line
-  public int ReadEndPointBufferSize {
-    get => field;
-    set => field = value; // TODO: validation
-  } = 0x100;
-
   public TimeSpan ReadEndPointTimeout {
     get => field;
     set => field = value; // TODO: validation

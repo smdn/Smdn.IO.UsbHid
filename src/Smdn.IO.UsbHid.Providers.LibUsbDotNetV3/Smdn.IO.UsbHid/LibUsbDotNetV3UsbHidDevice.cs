@@ -263,7 +263,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
       writeEndPointTimeout: service.Options.WriteEndPointTimeout,
       endPointReader: openInEndPoint
         ? DeviceImplementation.OpenEndpointReader(
-            readBufferSize: service.Options.ReadEndPointBufferSize,
+            readBufferSize: default, // LibUsbDotNet v3 never uses this argument
             readEndpointID: (ReadEndpointID)inEndpoint!.EndpointAddress,
             endpointType: (EndpointType)(inEndpoint.Attributes & AttributesTransferTypeMask)
           )
