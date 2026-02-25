@@ -54,6 +54,8 @@ public sealed class LibUsbDotNetV3Options {
     if (baseOptions is null)
       throw new ArgumentNullException(nameof(baseOptions));
 
+    ReadEndPointTimeout = baseOptions.ReadEndPointTimeout;
+    WriteEndPointTimeout = baseOptions.WriteEndPointTimeout;
     DebugLevel = baseOptions.DebugLevel;
 
     return this;

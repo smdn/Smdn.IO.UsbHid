@@ -91,6 +91,9 @@ public sealed class LibUsbDotNetOptions {
     if (baseOptions is null)
       throw new ArgumentNullException(nameof(baseOptions));
 
+    ReadEndPointBufferSize = baseOptions.ReadEndPointBufferSize;
+    ReadEndPointTimeout = baseOptions.ReadEndPointTimeout;
+    WriteEndPointTimeout = baseOptions.WriteEndPointTimeout;
     DebugLevel = baseOptions.DebugLevel;
 #if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
     LibUsbLibraryPath = baseOptions.LibUsbLibraryPath;
