@@ -86,7 +86,7 @@ internal sealed class LibUsbDotNetV3UsbHidService : IUsbHidService {
   /// <inheritdoc/>
   public void Dispose()
   {
-    context.Dispose();
+    context?.Dispose();
     context = null!;
   }
 
@@ -98,7 +98,7 @@ internal sealed class LibUsbDotNetV3UsbHidService : IUsbHidService {
   public ValueTask DisposeAsync()
   {
     // UsbContext does not implement IAsyncDisposable
-    context.Dispose();
+    context?.Dispose();
     context = null!;
 
     return default;
