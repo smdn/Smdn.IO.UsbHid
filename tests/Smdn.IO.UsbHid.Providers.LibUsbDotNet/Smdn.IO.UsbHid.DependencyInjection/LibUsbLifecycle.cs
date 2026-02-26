@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 #if !LIBUSBDOTNET_V3
 using System;
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+using System.IO;
+#endif
 #if NETFRAMEWORK || SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
 using System.Runtime.InteropServices;
 #endif
@@ -36,11 +39,23 @@ public class LibUsbLifecycle {
       NativeLibrary.SetDllImportResolver(
         assembly: typeof(MonoLibUsb.MonoUsbApi).Assembly,
         resolver: (libraryName, assembly, searchPath) => {
-          if (LibUsbDllName.Equals(libraryName, StringComparison.OrdinalIgnoreCase)) {
-            foreach (var libUsbFileName in LibUsbFileNameCandidates) {
-              if (NativeLibrary.TryLoad(libUsbFileName, assembly, searchPath, out var handleOfLibUsb))
-                return handleOfLibUsb;
+          if (!LibUsbDllName.Equals(libraryName, StringComparison.OrdinalIgnoreCase))
+            return IntPtr.Zero;
+
+          if (AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES") is string nativeDllSearchDirectories) {
+            foreach (var nativeDllSearchDirectory in nativeDllSearchDirectories.Split(Path.PathSeparator)) {
+              foreach (var libUsbFileName in LibUsbFileNameCandidates) {
+                var pathToNativeLibrary = Path.Combine(nativeDllSearchDirectory, libUsbFileName);
+
+                if (NativeLibrary.TryLoad(pathToNativeLibrary, out var handleOfLibUsb))
+                  return handleOfLibUsb;
+              }
             }
+          }
+
+          foreach (var libUsbFileName in LibUsbFileNameCandidates) {
+            if (NativeLibrary.TryLoad(libUsbFileName, assembly, searchPath, out var handleOfLibUsb))
+              return handleOfLibUsb;
           }
 
           return IntPtr.Zero;
