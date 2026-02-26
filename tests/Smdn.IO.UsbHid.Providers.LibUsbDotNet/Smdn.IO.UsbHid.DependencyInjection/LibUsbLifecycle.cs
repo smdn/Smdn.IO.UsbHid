@@ -15,7 +15,15 @@ namespace Smdn.IO.UsbHid.DependencyInjection;
 [SetUpFixture]
 public class LibUsbLifecycle {
   private class LibUsbSession : ILibUsbSession {
-    private static readonly string[] LibUsbFileNameCandidates = ["libusb-1.0", "libusb-1.0.0", "libusb-1.0.so.0", "libusb-1.0.0.dylib"];
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+    private static readonly string[] LibUsbFileNameCandidates = [
+      "libusb-1.0.so.0",
+      "libusb-1.0.dylib",
+      "libusb-1.0.0.dylib",
+      "libusb-1.0",
+      "libusb-1.0.0"
+    ];
+#endif
 
     public void Initialize(LibUsbDotNetOptions options)
     {
@@ -29,7 +37,7 @@ public class LibUsbLifecycle {
         resolver: (libraryName, assembly, searchPath) => {
           if (LibUsbDllName.Equals(libraryName, StringComparison.OrdinalIgnoreCase)) {
             foreach (var libUsbFileName in LibUsbFileNameCandidates) {
-              if (NativeLibrary.TryLoad(libUsbFileName, out var handleOfLibUsb))
+              if (NativeLibrary.TryLoad(libUsbFileName, assembly, searchPath, out var handleOfLibUsb))
                 return handleOfLibUsb;
             }
           }
