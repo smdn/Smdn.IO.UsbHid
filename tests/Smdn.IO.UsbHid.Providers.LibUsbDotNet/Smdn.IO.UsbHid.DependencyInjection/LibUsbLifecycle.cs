@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #if !LIBUSBDOTNET_V3
 using System;
-#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
+#if NETFRAMEWORK || SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
 using System.Runtime.InteropServices;
 #endif
 
@@ -27,6 +27,7 @@ public class LibUsbLifecycle {
 
     public void Initialize(LibUsbDotNetOptions options)
     {
+#if SYSTEM_RUNTIME_INTEROPSERVICES_NATIVELIBRARY
       if (OperatingSystem.IsWindows())
         return;
 
@@ -45,11 +46,16 @@ public class LibUsbLifecycle {
           return IntPtr.Zero;
         }
       );
+#endif
     }
 
     public void Dispose()
     {
+#if NETFRAMEWORK
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+#else
       if (OperatingSystem.IsWindows())
+#endif
         return;
 
       MonoUsbEventHandler.Exit();
