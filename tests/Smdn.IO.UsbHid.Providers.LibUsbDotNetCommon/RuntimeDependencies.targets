@@ -41,7 +41,7 @@ SPDX-License-Identifier: MIT
         $libusbdll_deploy_path = '$(_LibUsbDllFileFullPath)';
 
         if ($libusb_basedir -and !(Test-Path $libusb_basedir)) {
-          New-Item -Path $libusb_basedir -ItemType Directory -Force;
+          $null = New-Item -Path $libusb_basedir -ItemType Directory -Force;
         }
 
         if (!(Test-Path $libusb7z_outfile)) {
@@ -62,7 +62,7 @@ SPDX-License-Identifier: MIT
         $libusbdll_deploy_dir = Split-Path -Path $libusbdll_deploy_path -Parent;
 
         if ($libusbdll_deploy_dir -and !(Test-Path $libusbdll_deploy_dir)) {
-          New-Item -Path $libusbdll_deploy_dir -ItemType Directory -Force;
+          $null = New-Item -Path $libusbdll_deploy_dir -ItemType Directory -Force;
         }
 
         Copy-Item "$libusb_extractdir\VS2022\MS64\dll\libusb-1.0.dll" -Destination $libusbdll_deploy_path -Force;
