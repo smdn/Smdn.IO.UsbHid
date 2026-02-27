@@ -6,10 +6,64 @@ using Microsoft.Extensions.Logging;
 
 using NUnit.Framework;
 
-namespace Smdn.IO.UsbHid.DependencyInjection;
+namespace Smdn.IO.UsbHid;
 
 [TestFixture]
 public class LibUsbDotNetV3OptionsTests {
+  [Test]
+  public void ReadEndPointTimeout_OutOfRange(
+    [Values(-1, -60)] int timeout
+  )
+    => Assert.That(
+      () => new LibUsbDotNetV3Options() { ReadEndPointTimeout = TimeSpan.FromSeconds(timeout) },
+      Throws
+        .TypeOf<ArgumentOutOfRangeException>()
+        .With
+        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .EqualTo(nameof(LibUsbDotNetV3Options.ReadEndPointTimeout))
+    );
+
+  [Test]
+  public void ReadEndPointTimeout(
+    [Values(0, 1, 60)] int timeout
+  )
+  {
+    var options = new LibUsbDotNetV3Options();
+
+    Assert.That(
+      () => options.ReadEndPointTimeout = TimeSpan.FromSeconds(timeout),
+      Throws.Nothing
+    );
+    Assert.That(options.ReadEndPointTimeout, Is.EqualTo(TimeSpan.FromSeconds(timeout)));
+  }
+
+  [Test]
+  public void WriteEndPointTimeout_OutOfRange(
+    [Values(-1, -60)] int timeout
+  )
+    => Assert.That(
+      () => new LibUsbDotNetV3Options() { WriteEndPointTimeout = TimeSpan.FromSeconds(timeout) },
+      Throws
+        .TypeOf<ArgumentOutOfRangeException>()
+        .With
+        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .EqualTo(nameof(LibUsbDotNetV3Options.WriteEndPointTimeout))
+    );
+
+  [Test]
+  public void WriteEndPointTimeout(
+    [Values(0, 1, 60)] int timeout
+  )
+  {
+    var options = new LibUsbDotNetV3Options();
+
+    Assert.That(
+      () => options.WriteEndPointTimeout = TimeSpan.FromSeconds(timeout),
+      Throws.Nothing
+    );
+    Assert.That(options.WriteEndPointTimeout, Is.EqualTo(TimeSpan.FromSeconds(timeout)));
+  }
+
   private static System.Collections.IEnumerable YieldTestCases_Configure()
   {
     yield return new object[] { TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1), LogLevel.Debug };

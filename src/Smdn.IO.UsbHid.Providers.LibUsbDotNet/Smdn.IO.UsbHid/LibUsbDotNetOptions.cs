@@ -25,17 +25,38 @@ public sealed class LibUsbDotNetOptions {
 #pragma warning disable SA1513 // Closing brace should be followed by blank line
   public int ReadEndPointBufferSize {
     get => field;
-    set => field = value; // TODO: validation
+    set =>
+      field = 0 < value
+        ? value
+        : throw new ArgumentOutOfRangeException(
+            paramName: nameof(ReadEndPointBufferSize),
+            actualValue: value,
+            message: "must be non-zero positive value"
+          );
   } = 0x100;
 
   public TimeSpan ReadEndPointTimeout {
     get => field;
-    set => field = value; // TODO: validation
+    set =>
+      field = TimeSpan.Zero <= value
+        ? value
+        : throw new ArgumentOutOfRangeException(
+            paramName: nameof(ReadEndPointTimeout),
+            actualValue: value,
+            message: "must be zero or positive value"
+          );
   } = TimeSpan.FromSeconds(10);
 
   public TimeSpan WriteEndPointTimeout {
     get => field;
-    set => field = value; // TODO: validation
+    set =>
+      field = TimeSpan.Zero <= value
+        ? value
+        : throw new ArgumentOutOfRangeException(
+            paramName: nameof(WriteEndPointTimeout),
+            actualValue: value,
+            message: "must be zero or positive value"
+          );
   } = TimeSpan.FromSeconds(10);
 #pragma warning restore SA1513
 #pragma warning restore IDE0360
