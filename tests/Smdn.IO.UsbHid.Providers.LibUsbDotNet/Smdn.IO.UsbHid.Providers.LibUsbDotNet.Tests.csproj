@@ -10,8 +10,10 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
   </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNetCommon\RuntimeDependencies.targets" />
 </Project>

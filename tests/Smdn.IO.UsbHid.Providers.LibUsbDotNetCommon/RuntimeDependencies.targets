@@ -1,0 +1,99 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <_LibUsbVersion>1.0.27</_LibUsbVersion>
+    <_LibUsbBaseDirectory>$(MSBuildThisFileDirectory)libusb\</_LibUsbBaseDirectory>
+    <_LibUsbExtractDirectory>$(_LibUsbBaseDirectory)libusb-$(_LibUsbVersion)\</_LibUsbExtractDirectory>
+    <_LibUsbDllFileFullPath>$(_LibUsbBaseDirectory)libusb-1.0.dll</_LibUsbDllFileFullPath>
+  </PropertyGroup>
+
+  <Target
+    Name="InstallCIRuntimeDependencies"
+    BeforeTargets="DispatchToInnerBuilds;BeforeBuild"
+    Condition="'$(GITHUB_ACTIONS)' == 'true' and ('$(IsCrossTargetingBuild)' == 'true' or '$(TargetFrameworks)' == '')"
+  >
+    <Exec
+      Command="sudo apt-get update &amp;&amp; sudo apt-get install -y libusb-1.0-0-dev"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::Linux)
+        ))
+      "
+    />
+
+    <Exec
+      Command="brew install libusb"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::OSX)
+        ))
+      "
+    />
+
+    <PropertyGroup>
+      <_LibUsbDeployScript><![CDATA[
+        $libusb_basedir = '$(_LibUsbBaseDirectory)';
+        $libusb7z_outfile = '$(_LibUsbBaseDirectory)libusb.7z';
+        $libusb_extractdir = '$(_LibUsbExtractDirectory)';
+        $libusbdll_deploy_path = '$(_LibUsbDllFileFullPath)';
+
+        if ($libusb_basedir -and !(Test-Path $libusb_basedir)) {
+          New-Item -Path $libusb_basedir -ItemType Directory -Force;
+        }
+
+        if (!(Test-Path $libusb7z_outfile)) {
+          Write-Host 'Downloading libusb v$(_LibUsbVersion)...';
+          Invoke-WebRequest -Uri 'https://github.com/libusb/libusb/releases/download/v$(_LibUsbVersion)/libusb-$(_LibUsbVersion).7z' -OutFile $libusb7z_outfile;
+        }
+
+        if (!(Test-Path $libusb_extractdir)) {
+          if (!(Get-Command 7z -ErrorAction SilentlyContinue)) {
+            $env:PATH = $env:ProgramFiles + '\7-Zip;' + $env:PATH;
+          }
+
+          $7z_outdir_option = '-O' + $libusb_extractdir;
+          Write-Host "Extracting $libusb7z_outfile to $libusb_extractdir...";
+          & 7z x $libusb7z_outfile $7z_outdir_option -y -bso0 -bsp0;
+        }
+
+        $libusbdll_deploy_dir = Split-Path -Path $libusbdll_deploy_path -Parent;
+
+        if ($libusbdll_deploy_dir -and !(Test-Path $libusbdll_deploy_dir)) {
+          New-Item -Path $libusbdll_deploy_dir -ItemType Directory -Force;
+        }
+
+        Copy-Item "$libusb_extractdir\VS2022\MS64\dll\libusb-1.0.dll" -Destination $libusbdll_deploy_path -Force;
+      ]]></_LibUsbDeployScript>
+    </PropertyGroup>
+
+    <Exec
+      Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$(_LibUsbDeployScript.Replace('%0A', ' ').Replace('%0D', ' ').Replace('%09', ' ').Trim())&quot;"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::Windows)
+        ))
+      "
+    />
+  </Target>
+
+  <Target
+    Name="IncludeLibUsbDllInOutput"
+    BeforeTargets="GetCopyToOutputDirectoryItems"
+    DependsOnTargets="InstallCIRuntimeDependencies"
+    Condition="'$(GITHUB_ACTIONS)' == 'true'"
+  >
+    <ItemGroup>
+      <Content Include="$(_LibUsbDllFileFullPath)" Condition="Exists('$(_LibUsbDllFileFullPath)')">
+        <Link>libusb-1.0.dll</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <ContentWithTargetPath Include="$(_LibUsbDllFileFullPath)" Condition="Exists('$(_LibUsbDllFileFullPath)')">
+        <TargetPath>libusb-1.0.dll</TargetPath>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </ContentWithTargetPath>
+    </ItemGroup>
+  </Target>
+</Project>

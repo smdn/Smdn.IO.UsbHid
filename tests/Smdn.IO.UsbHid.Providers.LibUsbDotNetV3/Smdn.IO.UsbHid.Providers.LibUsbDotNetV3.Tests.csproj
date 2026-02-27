@@ -8,9 +8,20 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup>
+    <_IsRunningOnGitHubActionsWindowsRunnerImage Condition="
+      '$(GITHUB_ACTIONS)' == 'true' and
+      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        $([System.Runtime.InteropServices.OSPlatform]::Windows)
+      ))
+    ">true</_IsRunningOnGitHubActionsWindowsRunnerImage>
+
     <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet100)' == 'true' ">net10.0;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet80)' == 'true' ">net8.0;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(EnableTargetFrameworkNetFx)' == 'true' ">net481;net462;$(TargetFrameworks)</TargetFrameworks>
+    <!-- disabled test with .NET Framework on GitHub Actions Windows runner image -->
+    <TargetFrameworks Condition="
+      '$(EnableTargetFrameworkNetFx)' == 'true' and
+      '$(_IsRunningOnGitHubActionsWindowsRunnerImage)' != 'true'
+    ">net481;net462;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,4 +32,6 @@ SPDX-License-Identifier: MIT
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.DependencyInjection\*.cs" />
   </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNetCommon\RuntimeDependencies.targets" />
 </Project>
