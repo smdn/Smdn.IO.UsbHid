@@ -17,7 +17,7 @@ using NUnit.Framework;
 
 using MonoLibUsb;
 
-namespace Smdn.IO.UsbHid.DependencyInjection;
+namespace Smdn.IO.UsbHid;
 
 [SetUpFixture]
 public class LibUsbLifecycle {

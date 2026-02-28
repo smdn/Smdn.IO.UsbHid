@@ -30,6 +30,7 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.Common\Smdn.IO.UsbHid\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.DependencyInjection\*.cs" />
   </ItemGroup>
 

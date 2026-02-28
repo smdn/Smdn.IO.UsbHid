@@ -32,6 +32,8 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
   private readonly ResiliencePipelineProvider<string>? resiliencePipelineProvider;
   private readonly ILoggerFactory? loggerFactory;
 
+  private bool isDisposed = false;
+
   public LibUsbDotNetUsbHidService(
     LibUsbDotNetOptions options,
     ILibUsbSession libUsbSession,
@@ -52,6 +54,9 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
     CancellationToken cancellationToken = default
   )
   {
+    if (isDisposed)
+      throw new ObjectDisposedException(GetType().FullName);
+
     cancellationToken.ThrowIfCancellationRequested();
 
     var list = new List<IUsbHidDevice>(); // TODO: best initial capacity
@@ -80,12 +85,16 @@ internal sealed class LibUsbDotNetUsbHidService : IUsbHidService {
   /// <inheritdoc/>
   public void Dispose()
   {
-    // nothing to do
+    isDisposed = true;
   }
 
   /// <inheritdoc/>
   public ValueTask DisposeAsync()
-    => default; // nothing to do
+  {
+    isDisposed = true;
+
+    return default;
+  }
 
   public override string? ToString()
     => GetType().Assembly.GetName().Name;

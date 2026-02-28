@@ -15,5 +15,9 @@ SPDX-License-Identifier: MIT
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.Common\Smdn.IO.UsbHid\*.cs" />
+  </ItemGroup>
+
   <Import Project="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNetCommon\RuntimeDependencies.targets" />
 </Project>
