@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// A class that represents the options for the Route B session configurations.
+/// A class that represents the options for the LibUsbDotNet configurations.
 /// </summary>
 // To enable the addition of options in future versions, exposes as a class rather than a struct.
 public sealed class LibUsbDotNetOptions {
