@@ -95,6 +95,10 @@ public class IUsbHidServiceTests {
       Throws.Nothing
     );
     Assert.That(devices, Is.Not.Null);
+
+    foreach (var device in devices) {
+      device.Dispose();
+    }
   }
 
   [Test]
