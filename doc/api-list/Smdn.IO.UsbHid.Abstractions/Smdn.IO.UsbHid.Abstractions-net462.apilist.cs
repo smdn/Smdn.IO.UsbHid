@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0-preview1)
+// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0-preview2)
 //   Name: Smdn.IO.UsbHid.Abstractions
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview1+a0026a0d8243b6ccfede784d47f57fe67f841d46
+//   InformationalVersion: 1.0.0-preview2+e59c4892944af349fe45ff1bcd179040184e2c33
 //   TargetFramework: .NETFramework,Version=v4.6.2
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=a0026a0d8243b6ccfede784d47f57fe67f841d46
+//   Metadata: RepositoryCommit=e59c4892944af349fe45ff1bcd179040184e2c33
 //   Referenced assemblies:
 //     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
