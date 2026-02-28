@@ -1,13 +1,13 @@
-// Smdn.IO.UsbHid.Providers.HidSharp.dll (Smdn.IO.UsbHid.Providers.HidSharp-1.0.0-preview1)
+// Smdn.IO.UsbHid.Providers.HidSharp.dll (Smdn.IO.UsbHid.Providers.HidSharp-1.0.0-preview2)
 //   Name: Smdn.IO.UsbHid.Providers.HidSharp
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview1+3d716f83a8312995dd05a9461cfe55e852d34618
+//   InformationalVersion: 1.0.0-preview2+b6eac8f9f28c4750e72902be38e5e8ee9c8724e5
 //   TargetFramework: .NETCoreApp,Version=v10.0
 //   Configuration: Release
 //   Metadata: IsTrimmable=True
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=3d716f83a8312995dd05a9461cfe55e852d34618
+//   Metadata: RepositoryCommit=b6eac8f9f28c4750e72902be38e5e8ee9c8724e5
 //   Referenced assemblies:
 //     HidSharp, Version=2.1.0.0, Culture=neutral
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
