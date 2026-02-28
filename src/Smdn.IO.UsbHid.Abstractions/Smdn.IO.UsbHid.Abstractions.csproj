@@ -22,6 +22,7 @@ The following packages are available for the USB-HID backend providers:
 
 - [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
+- [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device</PackageTags>
