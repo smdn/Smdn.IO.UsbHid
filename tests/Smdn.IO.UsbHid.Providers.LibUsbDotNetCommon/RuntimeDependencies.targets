@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project>
   <PropertyGroup>
-    <_LibUsbVersion>1.0.27</_LibUsbVersion>
+    <_LibUsbVersion>1.0.29</_LibUsbVersion>
     <_LibUsbBaseDirectory>$(MSBuildThisFileDirectory)libusb\</_LibUsbBaseDirectory>
     <_LibUsbExtractDirectory>$(_LibUsbBaseDirectory)libusb-$(_LibUsbVersion)\</_LibUsbExtractDirectory>
     <_LibUsbDllFileFullPath>$(_LibUsbBaseDirectory)libusb-1.0.dll</_LibUsbDllFileFullPath>
@@ -65,7 +65,9 @@ SPDX-License-Identifier: MIT
           $null = New-Item -Path $libusbdll_deploy_dir -ItemType Directory -Force;
         }
 
-        Copy-Item "$libusb_extractdir\VS2022\MS64\dll\libusb-1.0.dll" -Destination $libusbdll_deploy_path -Force;
+        Copy-Item "$libusb_extractdir\MinGW64\dll\libusb-1.0.dll" -Destination $libusbdll_deploy_path -Force;
+
+        Unblock-File -Path $libusbdll_deploy_path;
       ]]></_LibUsbDeployScript>
     </PropertyGroup>
 
