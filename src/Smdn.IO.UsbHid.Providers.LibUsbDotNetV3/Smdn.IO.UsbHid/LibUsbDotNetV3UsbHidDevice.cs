@@ -231,9 +231,16 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
       try {
         DeviceImplementation.SetConfiguration(cfg);
       }
-      catch (UsbException ex) when (ex.ErrorCode == Error.Busy) {
-        // [LibUsbDotNet 3.0.87-alpha] SetConfiguration always throw UsbException with Error.Busy
-        LogUsbHidOpenEndPointSetConfigurationBusy(ex, hidInterface.Number, hidInterface.Interface, cfg);
+      catch (UsbException ex) when (ex.ErrorCode is Error.Busy or Error.NotFound) {
+        // [LibUsbDotNet 3.0.87-alpha] always throw UsbException with Error.Busy
+        // [LibUsbDotNet 3.0.167-alpha] (Windows) throw UsbException with Error.NotFound
+        LogUsbHidOpenEndPointSetConfigurationExpectedException(
+          ex,
+          hidInterface.Number,
+          hidInterface.Interface,
+          cfg,
+          ex.ErrorCode
+        );
         continue; // expected, continue
       }
       catch (Exception ex) {
@@ -293,11 +300,12 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
     Level = Microsoft.Extensions.Logging.LogLevel.Warning,
     Message = "Attempt to open endpoint (HID interface #{Number}, {Iface}): Configuration #{Configuration}, ErrorCode: {ErrorCode}."
   )]
-  private partial void LogUsbHidOpenEndPointSetConfigurationBusy(
+  private partial void LogUsbHidOpenEndPointSetConfigurationExpectedException(
     Exception ex,
     int number,
     string iface,
-    int configuration
+    int configuration,
+    Error errorCode
   );
 
   [LoggerMessage(
