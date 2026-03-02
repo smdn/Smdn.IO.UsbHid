@@ -216,12 +216,15 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
     if (openInEndPoint && inEndpoint is null)
       throw new UsbHidException("HID IN endpoint not found");
 
-    LogUsbHidOpenEndPointAttemptToOpen(hidInterface.Number, hidInterface.Interface);
-
     cancellationToken.ThrowIfCancellationRequested();
 
-    if (!DeviceImplementation.IsOpen)
+    if (!DeviceImplementation.IsOpen) {
+#pragma warning disable CA1873
+      LogUsbHidOpenEndPointAttemptToOpen(DeviceImplementation.LocationId.ToString());
+#pragma warning restore CA1873
+
       DeviceImplementation.Open();
+    }
 
     // try set configuration
     foreach (var cfg in new[] { config.ConfigurationValue, 0 /* fallback */ }) {
@@ -279,30 +282,46 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   [LoggerMessage(
     EventId = EventIds.UsbHidOpenEndPoint,
     Level = Microsoft.Extensions.Logging.LogLevel.Debug,
-    Message = "Attempt to open endpoint (HID interface #{Number}, {Iface})"
+    Message = "Attempt to open device (Device: #{Device})"
   )]
-  private partial void LogUsbHidOpenEndPointAttemptToOpen(int number, string iface);
+  private partial void LogUsbHidOpenEndPointAttemptToOpen(
+    string device
+  );
 
   [LoggerMessage(
     EventId = EventIds.UsbHidOpenEndPoint + 1,
     Level = Microsoft.Extensions.Logging.LogLevel.Warning,
-    Message = "Attempt to open endpoint (HID interface #{Number}, {Iface}): Configuration #{Configuration} resource busy."
+    Message = "Attempt to open endpoint (HID interface #{Number}, {Iface}): Configuration #{Configuration}, ErrorCode: {ErrorCode}."
   )]
-  private partial void LogUsbHidOpenEndPointSetConfigurationBusy(Exception ex, int number, string iface, int configuration);
+  private partial void LogUsbHidOpenEndPointSetConfigurationBusy(
+    Exception ex,
+    int number,
+    string iface,
+    int configuration
+  );
 
   [LoggerMessage(
     EventId = EventIds.UsbHidOpenEndPoint + 2,
     Level = Microsoft.Extensions.Logging.LogLevel.Critical,
     Message = "Attempt to open endpoint (HID interface #{Number}, {Iface}): Set configuration #{Configuration} failed."
   )]
-  private partial void LogUsbHidOpenEndPointSetConfigurationFailed(Exception ex, int number, string iface, int configuration);
+  private partial void LogUsbHidOpenEndPointSetConfigurationFailed(
+    Exception ex,
+    int number,
+    string iface,
+    int configuration
+  );
 
   [LoggerMessage(
     EventId = EventIds.UsbHidOpenEndPoint + 3,
     Level = Microsoft.Extensions.Logging.LogLevel.Critical,
     Message = "Open endpoint failed (HID interface #{Number}, {Iface}): Claim interface #{Number} failed."
   )]
-  private partial void LogUsbHidOpenEndPointClaimInterfaceFailed(Exception ex, int number, string iface);
+  private partial void LogUsbHidOpenEndPointClaimInterfaceFailed(
+    Exception ex,
+    int number,
+    string iface
+  );
 
   /// <inheritdoc/>
   public IUsbHidEndPoint OpenEndPoint(
