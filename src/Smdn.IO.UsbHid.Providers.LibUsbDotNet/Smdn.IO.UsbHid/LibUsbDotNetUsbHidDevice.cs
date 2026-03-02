@@ -236,6 +236,8 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
 
       foreach (var cfg in configs) {
         try {
+          LogUsbHidOpenEndPointAttemptToSetConfiguration(hidInterface.Descriptor.InterfaceID, hidInterface.InterfaceString, cfg);
+
           if (!wholeUsbDevice.SetConfiguration(cfg))
             continue;
         }
@@ -290,6 +292,17 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   )]
   private partial void LogUsbHidOpenEndPointAttemptToOpen(
     string device
+  );
+
+  [LoggerMessage(
+    EventId = EventIds.UsbHidOpenEndPoint + 1,
+    Level = Microsoft.Extensions.Logging.LogLevel.Debug,
+    Message = "Attempt to set configuration (HID interface #{Number}, {Iface}): Configuration #{Configuration}."
+  )]
+  private partial void LogUsbHidOpenEndPointAttemptToSetConfiguration(
+    int number,
+    string iface,
+    int configuration
   );
 
   [LoggerMessage(
