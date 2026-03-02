@@ -227,7 +227,11 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
     }
 
     // try set configuration
-    foreach (var cfg in new[] { config.ConfigurationValue, 0 /* fallback */ }) {
+    ReadOnlySpan<int> configs = config.ConfigurationValue == 0
+      ? [0]
+      : [config.ConfigurationValue, 0 /* fallback */];
+
+    foreach (var cfg in configs) {
       try {
         DeviceImplementation.SetConfiguration(cfg);
       }

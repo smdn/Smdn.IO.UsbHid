@@ -230,7 +230,11 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
 
     // try set configuration
     if (DeviceImplementation is IUsbDevice wholeUsbDevice) {
-      foreach (var cfg in new byte[] { config.Descriptor.ConfigID, 0 /* fallback */ }) {
+      ReadOnlySpan<byte> configs = config.Descriptor.ConfigID == 0
+        ? [0]
+        : [config.Descriptor.ConfigID, 0 /* fallback */];
+
+      foreach (var cfg in configs) {
         try {
           if (!wholeUsbDevice.SetConfiguration(cfg))
             continue;
