@@ -25,25 +25,25 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
   /// <inheritdoc/>
   public IUsbHidDevice Device => device ?? throw new ObjectDisposedException(GetType().Name);
 
-  private HidStream? endPointImplementation;
-  private HidStream EndPointImplementation => endPointImplementation ?? throw new ObjectDisposedException(GetType().Name);
+  private HidStream? endPointStream;
+  private HidStream EndPointStream => endPointStream ?? throw new ObjectDisposedException(GetType().Name);
 
   /// <inheritdoc/>
-  public bool CanRead => EndPointImplementation.CanRead;
+  public bool CanRead => EndPointStream.CanRead;
 
   /// <inheritdoc/>
-  public bool CanWrite => EndPointImplementation.CanWrite;
-
-  /// <inheritdoc/>
-  [CLSCompliant(false)]
-  public HidStream? ReadEndPoint => EndPointImplementation;
+  public bool CanWrite => EndPointStream.CanWrite;
 
   /// <inheritdoc/>
   [CLSCompliant(false)]
-  public HidStream? WriteEndPoint => EndPointImplementation;
+  public HidStream? ReadEndPoint => EndPointStream;
 
-  private int MaxOutputReportLength => EndPointImplementation.Device.GetMaxOutputReportLength();
-  private int MaxInputReportLength => EndPointImplementation.Device.GetMaxInputReportLength();
+  /// <inheritdoc/>
+  [CLSCompliant(false)]
+  public HidStream? WriteEndPoint => EndPointStream;
+
+  private int MaxOutputReportLength => EndPointStream.Device.GetMaxOutputReportLength();
+  private int MaxInputReportLength => EndPointStream.Device.GetMaxInputReportLength();
 
   internal HidSharpUsbHidEndPoint(
     HidSharpUsbHidDevice device,
@@ -52,7 +52,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
   )
   {
     this.device = device ?? throw new ArgumentNullException(nameof(device));
-    endPointImplementation = stream ?? throw new ArgumentNullException(nameof(stream));
+    endPointStream = stream ?? throw new ArgumentNullException(nameof(stream));
     this.shouldDisposeDevice = shouldDisposeDevice;
   }
 
@@ -70,8 +70,8 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
       device = null;
     }
 
-    endPointImplementation?.Dispose();
-    endPointImplementation = null;
+    endPointStream?.Dispose();
+    endPointStream = null;
   }
 
   /// <inheritdoc/>
@@ -83,9 +83,9 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
       device = null;
     }
 
-    if (endPointImplementation is not null) {
-      await endPointImplementation.DisposeAsync().ConfigureAwait(false);
-      endPointImplementation = null;
+    if (endPointStream is not null) {
+      await endPointStream.DisposeAsync().ConfigureAwait(false);
+      endPointStream = null;
     }
   }
 #else
@@ -109,7 +109,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
 #if SYSTEM_IO_STREAM_WRITE_READONLYSPAN_OF_BYTE
     // Stream.Write(ReadOnlySpan<byte>) does not take CancellationToken
-    EndPointImplementation.Write(buffer);
+    EndPointStream.Write(buffer);
 #else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxOutputReportLength);
@@ -117,7 +117,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     try {
       buffer.CopyTo(buf);
 
-      EndPointImplementation.Write(buf, 0, len);
+      EndPointStream.Write(buf, 0, len);
     }
     finally {
       ArrayPool<byte>.Shared.Return(buf);
@@ -145,7 +145,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     cancellationToken.ThrowIfCancellationRequested();
 
 #if SYSTEM_IO_STREAM_WRITEASYNC_READONLYMEMORY_OF_BYTE
-    return EndPointImplementation.WriteAsync(buffer, cancellationToken);
+    return EndPointStream.WriteAsync(buffer, cancellationToken);
 #else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxOutputReportLength);
@@ -153,7 +153,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     try {
       buffer.CopyTo(buf);
 
-      EndPointImplementation.Write(buf, 0, len);
+      EndPointStream.Write(buf, 0, len);
     }
     finally {
       ArrayPool<byte>.Shared.Return(buf);
@@ -179,13 +179,13 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
 #if SYSTEM_IO_STREAM_READ_SPAN_OF_BYTE
     // Stream.Read(Span<byte>) does not take CancellationToken
-    return EndPointImplementation.Read(buffer);
+    return EndPointStream.Read(buffer);
 #else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxInputReportLength);
 
     try {
-      var ret = EndPointImplementation.Read(buf, 0, len);
+      var ret = EndPointStream.Read(buf, 0, len);
 
       buf.AsSpan(0, ret).CopyTo(buffer);
 
@@ -217,7 +217,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     cancellationToken.ThrowIfCancellationRequested();
 
 #if SYSTEM_IO_STREAM_READASYNC_MEMORY_OF_BYTE
-    return EndPointImplementation.ReadAsync(buffer, cancellationToken);
+    return EndPointStream.ReadAsync(buffer, cancellationToken);
 #else
     var len = buffer.Length;
     byte[]? rentBuffer = null;
@@ -237,7 +237,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
         new(
 #endif
 #pragma warning restore SA1114
-          result: EndPointImplementation.Read(buf.Array ?? throw new InvalidOperationException("destination array is null"), buf.Offset, buf.Count)
+          result: EndPointStream.Read(buf.Array ?? throw new InvalidOperationException("destination array is null"), buf.Offset, buf.Count)
         );
     }
     finally {
@@ -251,5 +251,5 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
   }
 
   public override string? ToString()
-    => $"{GetType().FullName} (EndPointImplementation='{EndPointImplementation}')";
+    => $"{GetType().FullName} (EndPointImplementation='{EndPointStream}')";
 }
