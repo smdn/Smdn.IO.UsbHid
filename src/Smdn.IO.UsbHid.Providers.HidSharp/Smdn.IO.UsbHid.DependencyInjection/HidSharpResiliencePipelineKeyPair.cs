@@ -11,8 +11,7 @@ namespace Smdn.IO.UsbHid.DependencyInjection;
 
 #pragma warning disable IDE0055
 public readonly record struct HidSharpResiliencePipelineKeyPair<TServiceKey> :
-  IResiliencePipelineKeyPair<TServiceKey, string>,
-  IEquatable<HidSharpResiliencePipelineKeyPair<TServiceKey>>
+  IResiliencePipelineKeyPair<TServiceKey, string>
 #pragma warning restore IDE0055
 {
   /// <summary>

@@ -19,10 +19,8 @@ namespace Smdn.IO.UsbHid.DependencyInjection;
 public readonly record struct
 #if LIBUSBDOTNET_V3
 LibUsbDotNetV3ResiliencePipelineKeyPair<TServiceKey> :
-  IEquatable<LibUsbDotNetV3ResiliencePipelineKeyPair<TServiceKey>>,
 #else
 LibUsbDotNetResiliencePipelineKeyPair<TServiceKey> :
-  IEquatable<LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>>,
 #endif
   IResiliencePipelineKeyPair<TServiceKey, string>
 #pragma warning restore IDE0055
