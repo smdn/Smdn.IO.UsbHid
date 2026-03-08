@@ -59,7 +59,7 @@ public abstract class UsbHidServiceBuilder<TServiceKey>(
   /// <exception cref="InvalidOperationException">
   /// The function to select the options name was not provided to the constructor.
   /// </exception>
-  public string? GetOptionsName()
+  public virtual string? GetOptionsName()
   {
     if (selectOptionsNameForServiceKey is null)
       throw new InvalidOperationException($"The name of the configured options cannot be selected from {nameof(ServiceKey)}.");
