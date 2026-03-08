@@ -9,7 +9,18 @@ namespace Smdn.IO.UsbHid;
 /// The exception that is thrown when an error occurs during a USB-HID device operation.
 /// </summary>
 public class UsbHidException : InvalidOperationException {
-  public UsbHidException() : base() { }
-  public UsbHidException(string message) : base(message) { }
-  public UsbHidException(string message, Exception innerException) : base(message, innerException) { }
+  public UsbHidException()
+    : base()
+  {
+  }
+
+  public UsbHidException(string? message)
+    : base(message)
+  {
+  }
+
+  public UsbHidException(string? message, Exception? innerException)
+    : base(message, innerException)
+  {
+  }
 }
