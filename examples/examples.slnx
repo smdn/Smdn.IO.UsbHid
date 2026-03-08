@@ -1,0 +1,33 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Solution>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.HidSharp/GettingStarted/">
+    <Project Path="Smdn.IO.UsbHid.Providers.HidSharp/GettingStarted/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.HidSharp/ResiliencePipelines/">
+    <Project Path="Smdn.IO.UsbHid.Providers.HidSharp/ResiliencePipelines/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.HidSharp/UnderlyingImplementation/">
+    <Project Path="Smdn.IO.UsbHid.Providers.HidSharp/UnderlyingImplementation/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNet/GettingStarted/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNet/GettingStarted/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNet/ResiliencePipelines/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNet/ResiliencePipelines/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNet/UnderlyingImplementation/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNet/UnderlyingImplementation/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/GettingStarted/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/GettingStarted/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/ResiliencePipelines/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/ResiliencePipelines/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/UnderlyingImplementation/">
+    <Project Path="Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/UnderlyingImplementation/Program.csproj" />
+  </Folder>
+</Solution>
