@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+#if !(SYSTEM_IO_STREAM_READ_SPAN_OF_BYTE || SYSTEM_IO_STREAM_READASYNC_MEMORY_OF_BYTE || SYSTEM_IO_STREAM_WRITE_READONLYSPAN_OF_BYTE || SYSTEM_IO_STREAM_WRITE_READONLYSPAN_OF_BYTE)
 using System.Buffers;
 using System.Runtime.InteropServices;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -105,6 +107,10 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
     cancellationToken.ThrowIfCancellationRequested();
 
+#if SYSTEM_IO_STREAM_WRITE_READONLYSPAN_OF_BYTE
+    // Stream.Write(ReadOnlySpan<byte>) does not take CancellationToken
+    EndPointImplementation.Write(buffer);
+#else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxOutputReportLength);
 
@@ -116,14 +122,19 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     finally {
       ArrayPool<byte>.Shared.Return(buf);
     }
+#endif
   }
 
+#if SYSTEM_IO_STREAM_WRITEASYNC_READONLYMEMORY_OF_BYTE
+  /// <inheritdoc/>
+#else
   /// <inheritdoc/>
   /// <remarks>
   /// This implementation performs a synchronous write, as the
   /// underlying <see cref="HidStream"/> does not
   /// support asynchronous operations.
   /// </remarks>
+#endif
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxOutputReportLength < buffer.Length)
@@ -133,6 +144,9 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
     cancellationToken.ThrowIfCancellationRequested();
 
+#if SYSTEM_IO_STREAM_WRITEASYNC_READONLYMEMORY_OF_BYTE
+    return EndPointImplementation.WriteAsync(buffer, cancellationToken);
+#else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxOutputReportLength);
 
@@ -150,6 +164,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 #else
     return default;
 #endif
+#endif
   }
 
   /// <inheritdoc/>
@@ -162,6 +177,10 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
     cancellationToken.ThrowIfCancellationRequested();
 
+#if SYSTEM_IO_STREAM_READ_SPAN_OF_BYTE
+    // Stream.Read(Span<byte>) does not take CancellationToken
+    return EndPointImplementation.Read(buffer);
+#else
     var len = buffer.Length;
     var buf = ArrayPool<byte>.Shared.Rent(MaxInputReportLength);
 
@@ -175,14 +194,19 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
     finally {
       ArrayPool<byte>.Shared.Return(buf);
     }
+#endif
   }
 
+#if SYSTEM_IO_STREAM_READASYNC_MEMORY_OF_BYTE
+  /// <inheritdoc/>
+#else
   /// <inheritdoc/>
   /// <remarks>
   /// This implementation performs a synchronous read, as the
   /// underlying <see cref="HidStream"/> does not
   /// support asynchronous operations.
   /// </remarks>
+#endif
   public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxInputReportLength < buffer.Length)
@@ -192,6 +216,9 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
     cancellationToken.ThrowIfCancellationRequested();
 
+#if SYSTEM_IO_STREAM_READASYNC_MEMORY_OF_BYTE
+    return EndPointImplementation.ReadAsync(buffer, cancellationToken);
+#else
     var len = buffer.Length;
     byte[]? rentBuffer = null;
 
@@ -220,6 +247,7 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
         ArrayPool<byte>.Shared.Return(rentBuffer);
       }
     }
+#endif
   }
 
   public override string? ToString()
