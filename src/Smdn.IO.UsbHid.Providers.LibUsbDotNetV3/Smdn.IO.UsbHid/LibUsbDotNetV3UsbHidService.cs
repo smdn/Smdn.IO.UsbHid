@@ -55,7 +55,7 @@ internal sealed class LibUsbDotNetV3UsbHidService : IUsbHidService {
 
     cancellationToken.ThrowIfCancellationRequested();
 
-    var deviceList = context.List();
+    using var deviceList = context.List();
     var list = new List<IUsbHidDevice>(capacity: deviceList.Count);
 
     foreach (var device in deviceList.OfType<UsbDevice>()) {
@@ -63,7 +63,7 @@ internal sealed class LibUsbDotNetV3UsbHidService : IUsbHidService {
         list.Add(
           new LibUsbDotNetV3UsbHidDevice(
             service: this,
-            device: device,
+            device: (UsbDevice)device.Clone(),
             resiliencePipelineProvider: resiliencePipelineProvider,
             logger: loggerFactory?.CreateLogger<LibUsbDotNetV3UsbHidDevice>()
           )
