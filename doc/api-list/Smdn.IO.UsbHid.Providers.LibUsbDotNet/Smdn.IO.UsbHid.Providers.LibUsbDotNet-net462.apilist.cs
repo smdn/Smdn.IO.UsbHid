@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Providers.LibUsbDotNet.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNet-1.0.0-preview2)
+// Smdn.IO.UsbHid.Providers.LibUsbDotNet.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNet-1.0.0-preview3)
 //   Name: Smdn.IO.UsbHid.Providers.LibUsbDotNet
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview2+800ac77890fe44346f9365547ae353b59ab5014c
+//   InformationalVersion: 1.0.0-preview3+f1cc8729011e4f92a8ec7f2d2964048385e37942
 //   TargetFramework: .NETFramework,Version=v4.6.2
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=800ac77890fe44346f9365547ae353b59ab5014c
+//   Metadata: RepositoryCommit=f1cc8729011e4f92a8ec7f2d2964048385e37942
 //   Referenced assemblies:
 //     LibUsbDotNet.LibUsbDotNet, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9
 //     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
@@ -57,8 +57,8 @@ namespace Smdn.IO.UsbHid {
   public sealed class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> {
     public static string ResiliencePipelineKeyForOpenEndPoint { get; } = "LibUsbDotNetUsbHidDevice.resiliencePipelineOpenEndPoint";
 
-    public UsbDevice DeviceImplementation { get; }
     public int ProductId { get; }
+    public UsbDevice UnderlyingDevice { get; }
     public int VendorId { get; }
 
     public void Dispose() {}
