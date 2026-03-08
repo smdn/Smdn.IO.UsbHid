@@ -33,17 +33,17 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   private const int EventIdOpenEndPoint = 10;
   private const int EventIdGetDeviceInfo = 20;
 
-  private HidDevice? deviceImplementation;
+  private HidDevice? underlyingDevice;
 
   /// <inheritdoc/>
   [CLSCompliant(false)]
-  public HidDevice DeviceImplementation => deviceImplementation ?? throw new ObjectDisposedException(GetType().FullName);
+  public HidDevice UnderlyingDevice => underlyingDevice ?? throw new ObjectDisposedException(GetType().FullName);
 
   /// <inheritdoc/>
-  public int VendorId => DeviceImplementation.VendorID;
+  public int VendorId => UnderlyingDevice.VendorID;
 
   /// <inheritdoc/>
-  public int ProductId => DeviceImplementation.ProductID;
+  public int ProductId => UnderlyingDevice.ProductID;
 
   private readonly ILogger logger;
   private readonly ResiliencePipeline resiliencePipelineOpenEndPoint;
@@ -54,7 +54,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
     ILogger? logger
   )
   {
-    deviceImplementation = device ?? throw new ArgumentNullException(nameof(device));
+    underlyingDevice = device ?? throw new ArgumentNullException(nameof(device));
     this.logger = logger ?? NullLogger.Instance;
 
     ResiliencePipeline? resiliencePipelineOpenEndPoint = null;
@@ -68,11 +68,11 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   }
 
 #if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
-  [MemberNotNull(nameof(deviceImplementation))]
+  [MemberNotNull(nameof(underlyingDevice))]
 #endif
   private void ThrowIfDisposed()
   {
-    if (deviceImplementation is null)
+    if (underlyingDevice is null)
       throw new ObjectDisposedException(GetType().FullName);
   }
 
@@ -91,7 +91,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
     productName = default;
 
     try {
-      productName = DeviceImplementation.GetProductName();
+      productName = UnderlyingDevice.GetProductName();
     }
     catch (IOException ex) {
       LogUsbHidGetDeviceInfo(ex, nameof(IOException), "product name");
@@ -122,7 +122,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
     manufacturer = default;
 
     try {
-      manufacturer = DeviceImplementation.GetManufacturer();
+      manufacturer = UnderlyingDevice.GetManufacturer();
     }
     catch (IOException ex) {
       LogUsbHidGetDeviceInfo(ex, nameof(IOException), "manufacturer name");
@@ -153,7 +153,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
     serialNumber = default;
 
     try {
-      serialNumber = DeviceImplementation.GetSerialNumber();
+      serialNumber = UnderlyingDevice.GetSerialNumber();
     }
     catch (IOException ex) {
       LogUsbHidGetDeviceInfo(ex, nameof(IOException), "serial number");
@@ -183,20 +183,20 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
 #endif
     out string? deviceIdentifier
   )
-    => (deviceIdentifier = DeviceImplementation.DevicePath) is not null;
+    => (deviceIdentifier = UnderlyingDevice.DevicePath) is not null;
 
   /// <inheritdoc/>
   public void Dispose()
   {
     // HidDevice does not implement IDisposable
-    deviceImplementation = null;
+    underlyingDevice = null;
   }
 
   /// <inheritdoc/>
   public ValueTask DisposeAsync()
   {
     // HidDevice does not implement IDisposable
-    deviceImplementation = null;
+    underlyingDevice = null;
 
     return default;
   }
@@ -219,9 +219,9 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
     try {
       return resiliencePipelineOpenEndPoint.Execute(
         callback: ctx => {
-          LogUsbHidOpenEndPoint(DeviceImplementation);
+          LogUsbHidOpenEndPoint(UnderlyingDevice);
 
-          return new HidSharpUsbHidEndPoint(this, DeviceImplementation.Open(), shouldDisposeDevice);
+          return new HidSharpUsbHidEndPoint(this, UnderlyingDevice.Open(), shouldDisposeDevice);
         },
         context: resilienceContext
       );
@@ -253,9 +253,9 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
       try {
         return await resiliencePipelineOpenEndPoint.ExecuteAsync(
           callback: ctx => {
-            LogUsbHidOpenEndPoint(DeviceImplementation);
+            LogUsbHidOpenEndPoint(UnderlyingDevice);
 
-            var endPoint = new HidSharpUsbHidEndPoint(this, DeviceImplementation.Open(), shouldDisposeDevice);
+            var endPoint = new HidSharpUsbHidEndPoint(this, UnderlyingDevice.Open(), shouldDisposeDevice);
 
             return
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
@@ -282,5 +282,5 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
 
   /// <inheritdoc/>
   public override string? ToString()
-    => $"{GetType().FullName} (DeviceImplementation='{DeviceImplementation}')";
+    => $"{GetType().FullName} (UnderlyingDevice='{UnderlyingDevice}')";
 }

@@ -81,13 +81,13 @@ public class IUsbHidServiceExtensionsTests {
       => throw new NotImplementedException();
   }
 
-  private record class PseudoDeviceImplementation(int VendorId, int ProductId, string DeviceType);
+  private record class PseudoDevice(int VendorId, int ProductId, string DeviceType);
 
-  private class PseudoUsbHidDeviceWrapper(PseudoDeviceImplementation implementation) :
-    PseudoUsbHidDevice(implementation.VendorId, implementation.ProductId),
-    IUsbHidDevice<PseudoDeviceImplementation>
+  private class PseudoUsbHidDeviceWrapper(PseudoDevice device) :
+    PseudoUsbHidDevice(device.VendorId, device.ProductId),
+    IUsbHidDevice<PseudoDevice>
   {
-    public PseudoDeviceImplementation DeviceImplementation { get; } = implementation;
+    public PseudoDevice UnderlyingDevice { get; } = device;
   }
 
   [Test]
@@ -361,7 +361,7 @@ public class IUsbHidServiceExtensionsTests {
     IUsbHidService? usbHidService = null;
 
     Assert.That(
-      () => usbHidService!.FindDevice<PseudoDeviceImplementation>(
+      () => usbHidService!.FindDevice<PseudoDevice>(
         vendorId: null,
         productId: null,
         predicate: _ => true,
@@ -381,7 +381,7 @@ public class IUsbHidServiceExtensionsTests {
     var usbHidService = new PseudoUsbHidService([]);
 
     Assert.That(
-      () => usbHidService.FindDevice<PseudoDeviceImplementation>(
+      () => usbHidService.FindDevice<PseudoDevice>(
         vendorId: null,
         productId: null,
         predicate: null!,
@@ -405,7 +405,7 @@ public class IUsbHidServiceExtensionsTests {
     };
     var usbHidService = new PseudoUsbHidService(allDevices);
 
-    var device = usbHidService.FindDevice<PseudoDeviceImplementation>(
+    var device = usbHidService.FindDevice<PseudoDevice>(
       vendorId: null,
       productId: null,
       predicate: d => d.DeviceType == "keyboard"
@@ -413,10 +413,10 @@ public class IUsbHidServiceExtensionsTests {
 
     Assert.That(device, Is.Not.Null);
     Assert.That(device, Is.TypeOf<PseudoUsbHidDeviceWrapper>());
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation, Is.Not.Null);
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.VendorId, Is.EqualTo(1));
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.ProductId, Is.EqualTo(2));
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.DeviceType, Is.EqualTo("keyboard"));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice, Is.Not.Null);
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.VendorId, Is.EqualTo(1));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.ProductId, Is.EqualTo(2));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.DeviceType, Is.EqualTo("keyboard"));
 
     Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
     Assert.That(allDevices[1].IsDisposed, Is.False, "device 1 not disposed");
@@ -434,7 +434,7 @@ public class IUsbHidServiceExtensionsTests {
     };
     var usbHidService = new PseudoUsbHidService(allDevices);
 
-    var device = usbHidService.FindDevice<PseudoDeviceImplementation>(
+    var device = usbHidService.FindDevice<PseudoDevice>(
       vendorId: 2,
       productId: 1,
       predicate: d => d.DeviceType == "keyboard"
@@ -442,10 +442,10 @@ public class IUsbHidServiceExtensionsTests {
 
     Assert.That(device, Is.Not.Null);
     Assert.That(device, Is.TypeOf<PseudoUsbHidDeviceWrapper>());
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation, Is.Not.Null);
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.VendorId, Is.EqualTo(2));
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.ProductId, Is.EqualTo(1));
-    Assert.That((device as PseudoUsbHidDeviceWrapper)!.DeviceImplementation.DeviceType, Is.EqualTo("keyboard"));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice, Is.Not.Null);
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.VendorId, Is.EqualTo(2));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.ProductId, Is.EqualTo(1));
+    Assert.That((device as PseudoUsbHidDeviceWrapper)!.UnderlyingDevice.DeviceType, Is.EqualTo("keyboard"));
 
     Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
     Assert.That(allDevices[1].IsDisposed, Is.True, "device 1 disposed");
@@ -463,7 +463,7 @@ public class IUsbHidServiceExtensionsTests {
     };
     var usbHidService = new PseudoUsbHidService(allDevices);
 
-    var device = usbHidService.FindDevice<PseudoDeviceImplementation>(
+    var device = usbHidService.FindDevice<PseudoDevice>(
       vendorId: null,
       productId: null,
       predicate: d => d.DeviceType == "gamepad"
@@ -491,7 +491,7 @@ public class IUsbHidServiceExtensionsTests {
     cts.Cancel();
 
     Assert.That(
-      () => usbHidService.FindDevice<PseudoDeviceImplementation>(
+      () => usbHidService.FindDevice<PseudoDevice>(
         vendorId: null,
         productId: null,
         predicate: _ => true,

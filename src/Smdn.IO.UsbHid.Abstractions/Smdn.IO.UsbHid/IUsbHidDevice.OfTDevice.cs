@@ -11,5 +11,5 @@ public interface IUsbHidDevice<TDevice> : IUsbHidDevice where TDevice : notnull 
   /// <summary>
   /// Gets the implementation-dependent underlying device object.
   /// </summary>
-  TDevice DeviceImplementation { get; }
+  TDevice UnderlyingDevice { get; }
 }

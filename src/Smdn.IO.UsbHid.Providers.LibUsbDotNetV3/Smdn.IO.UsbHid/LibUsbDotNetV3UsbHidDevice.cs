@@ -37,17 +37,17 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 
   private readonly LibUsbDotNetV3UsbHidService service;
 
-  private UsbDevice? deviceImplementation;
+  private UsbDevice? underlyingDevice;
 
   /// <inheritdoc/>
   [CLSCompliant(false)]
-  public UsbDevice DeviceImplementation => deviceImplementation ?? throw new ObjectDisposedException(GetType().FullName);
+  public UsbDevice UnderlyingDevice => underlyingDevice ?? throw new ObjectDisposedException(GetType().FullName);
 
   /// <inheritdoc/>
-  public int VendorId => DeviceImplementation.VendorId;
+  public int VendorId => UnderlyingDevice.VendorId;
 
   /// <inheritdoc/>
-  public int ProductId => DeviceImplementation.ProductId;
+  public int ProductId => UnderlyingDevice.ProductId;
 
   private readonly ResiliencePipeline resiliencePipelineOpenEndPoint;
   private readonly ILogger logger;
@@ -60,7 +60,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   )
   {
     this.service = service ?? throw new ArgumentNullException(nameof(service));
-    deviceImplementation = device ?? throw new ArgumentNullException(nameof(device));
+    underlyingDevice = device ?? throw new ArgumentNullException(nameof(device));
     this.logger = logger ?? NullLogger.Instance;
 
     ResiliencePipeline? resiliencePipelineOpenEndPoint = null;
@@ -75,7 +75,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 
   private void ThrowIfDisposed()
   {
-    if (deviceImplementation is null)
+    if (underlyingDevice is null)
       throw new ObjectDisposedException(GetType().FullName);
   }
 
@@ -92,10 +92,10 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   {
     productName = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
+    if (!UnderlyingDevice.IsOpen && !UnderlyingDevice.TryOpen())
       return false;
 
-    return (productName = DeviceImplementation.Descriptor.Product) is not null;
+    return (productName = UnderlyingDevice.Descriptor.Product) is not null;
   }
 
   /// <inheritdoc/>
@@ -111,10 +111,10 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   {
     manufacturer = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
+    if (!UnderlyingDevice.IsOpen && !UnderlyingDevice.TryOpen())
       return false;
 
-    return (manufacturer = DeviceImplementation.Descriptor.Manufacturer) is not null;
+    return (manufacturer = UnderlyingDevice.Descriptor.Manufacturer) is not null;
   }
 
   /// <inheritdoc/>
@@ -130,10 +130,10 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   {
     serialNumber = default;
 
-    if (!DeviceImplementation.IsOpen && !DeviceImplementation.TryOpen())
+    if (!UnderlyingDevice.IsOpen && !UnderlyingDevice.TryOpen())
       return false;
 
-    return (serialNumber = DeviceImplementation.Descriptor.SerialNumber) is not null;
+    return (serialNumber = UnderlyingDevice.Descriptor.SerialNumber) is not null;
   }
 
   /// <inheritdoc/>
@@ -143,13 +143,13 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 #endif
     out string? deviceIdentifier
   )
-    => (deviceIdentifier = DeviceImplementation.LocationId.ToString()) is not null;
+    => (deviceIdentifier = UnderlyingDevice.LocationId.ToString()) is not null;
 
   /// <inheritdoc/>
   public void Dispose()
   {
-    deviceImplementation?.Dispose();
-    deviceImplementation = null;
+    underlyingDevice?.Dispose();
+    underlyingDevice = null;
   }
 
   /// <inheritdoc/>
@@ -160,8 +160,8 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
   public ValueTask DisposeAsync()
   {
     // UsbDevice does not implement IAsyncDisposable
-    deviceImplementation?.Dispose();
-    deviceImplementation = null;
+    underlyingDevice?.Dispose();
+    underlyingDevice = null;
 
     return default;
   }
@@ -187,7 +187,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
     // const byte EndpointAddressNumberMask    = 0b_0000_0111;
     const byte AttributesTransferTypeMask   = 0b_0000_0011;
 
-    foreach (var cfg in DeviceImplementation.Configs) {
+    foreach (var cfg in UnderlyingDevice.Configs) {
       foreach (var iface in cfg.Interfaces) {
         if (iface.Class == ClassCode.Hid) {
           config = cfg;
@@ -218,12 +218,12 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 
     cancellationToken.ThrowIfCancellationRequested();
 
-    if (!DeviceImplementation.IsOpen) {
+    if (!UnderlyingDevice.IsOpen) {
 #pragma warning disable CA1873
-      LogUsbHidOpenEndPointAttemptToOpen(DeviceImplementation.LocationId.ToString());
+      LogUsbHidOpenEndPointAttemptToOpen(UnderlyingDevice.LocationId.ToString());
 #pragma warning restore CA1873
 
-      DeviceImplementation.Open();
+      UnderlyingDevice.Open();
     }
 
     // try set configuration
@@ -235,7 +235,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
       try {
         LogUsbHidOpenEndPointAttemptToSetConfiguration(hidInterface.Number, hidInterface.Interface, cfg);
 
-        DeviceImplementation.SetConfiguration(cfg);
+        UnderlyingDevice.SetConfiguration(cfg);
       }
       catch (UsbException ex) when (ex.ErrorCode is Error.Busy or Error.NotFound) {
         // [LibUsbDotNet 3.0.87-alpha] always throw UsbException with Error.Busy
@@ -257,7 +257,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 
     // try claim HID interface
     try {
-      DeviceImplementation.ClaimInterface(hidInterface.Number);
+      UnderlyingDevice.ClaimInterface(hidInterface.Number);
     }
     catch (Exception ex) {
       LogUsbHidOpenEndPointClaimInterfaceFailed(ex, hidInterface.Number, hidInterface.Interface);
@@ -268,7 +268,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
     return new(
       device: this,
       endPointWriter: openOutEndPoint
-        ? DeviceImplementation.OpenEndpointWriter(
+        ? UnderlyingDevice.OpenEndpointWriter(
             writeEndpointID: (WriteEndpointID)outEndpoint!.EndpointAddress,
             endpointType: (EndpointType)(outEndpoint.Attributes & AttributesTransferTypeMask)
           )
@@ -278,7 +278,7 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
         : 0,
       writeEndPointTimeout: service.Options.WriteEndPointTimeout,
       endPointReader: openInEndPoint
-        ? DeviceImplementation.OpenEndpointReader(
+        ? UnderlyingDevice.OpenEndpointReader(
             readBufferSize: default, // LibUsbDotNet v3 never uses this argument
             readEndpointID: (ReadEndpointID)inEndpoint!.EndpointAddress,
             endpointType: (EndpointType)(inEndpoint.Attributes & AttributesTransferTypeMask)
@@ -430,5 +430,5 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
 
   /// <inheritdoc/>
   public override string? ToString()
-    => $"{GetType().FullName} (DeviceImplementation='{DeviceImplementation}')";
+    => $"{GetType().FullName} (UnderlyingDevice='{UnderlyingDevice}')";
 }

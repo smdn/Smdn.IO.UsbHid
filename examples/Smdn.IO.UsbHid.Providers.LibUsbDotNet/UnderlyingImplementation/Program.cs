@@ -24,9 +24,9 @@ using IUsbHidDevice d = usbHidService.GetDevices(VendorId, ProductId).First();
 var device = (IUsbHidDevice<LibUsbDotNet.UsbDevice>)d;
 
 // It is possible to access the UsbDevice object via the
-// DeviceImplementation property when using LibUsbDotNet.
+// UnderlyingDevice property when using LibUsbDotNet.
 // This allows you to access LibUsbDotNet-specific APIs.
-LibUsbDotNet.UsbDevice usbDevice = device.DeviceImplementation;
+LibUsbDotNet.UsbDevice usbDevice = device.UnderlyingDevice;
 
 if (usbDevice.Open()) {
   Console.WriteLine("DevicePath: {0}", usbDevice.DevicePath);

@@ -170,11 +170,11 @@ public static class IUsbHidServiceExtensions {
   /// </exception>
   /// <remarks>
   /// This method applies the <paramref name="predicate"/> to the underlying device object
-  /// (<see cref="IUsbHidDevice{T}.DeviceImplementation"/>) from the backend library to filter devices.
+  /// (<see cref="IUsbHidDevice{T}.UnderlyingDevice"/>) from the backend library to filter devices.
   /// This is useful for filtering on properties that are specific to the backend implementation.
   /// </remarks>
   /// <seealso cref="IUsbHidService.GetDevices(CancellationToken)"/>
-  /// <seealso cref="IUsbHidDevice{T}.DeviceImplementation"/>
+  /// <seealso cref="IUsbHidDevice{T}.UnderlyingDevice"/>
   public static IUsbHidDevice? FindDevice<TDevice>(
     this IUsbHidService usbHidService,
     int? vendorId,
@@ -202,7 +202,7 @@ public static class IUsbHidServiceExtensions {
         if (productId.HasValue && device.ProductId != productId.Value)
           continue;
 
-        if (device is IUsbHidDevice<TDevice> d && predicate(d.DeviceImplementation)) {
+        if (device is IUsbHidDevice<TDevice> d && predicate(d.UnderlyingDevice)) {
           matchedDevice = device;
           break;
         }

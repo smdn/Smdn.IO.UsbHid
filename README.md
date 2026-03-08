@@ -18,7 +18,7 @@ The design decouples application logic from specific hardware access libraries t
 
 A backend provider for `Smdn.IO.UsbHid.*` that utilizes the [HIDSharp](https://github.com/SeekHisKingdom/HIDSharp) library for hardware communication.
 
-It maps the common interfaces to HIDSharp's `HidDevice` and `HidStream`, and it supports standard DI registration via the `AddHidSharpUsbHid` extension methods. The implementation allows for the integration of [Polly](https://github.com/App-vNext/Polly) resilience pipelines for the endpoint opening process through the `HidSharpUsbHidServiceBuilder`. While adhering to the unified API, the underlying `HidDevice` instance remains accessible via the `IUsbHidDevice.DeviceImplementation` property for library-specific operations.
+It maps the common interfaces to HIDSharp's `HidDevice` and `HidStream`, and it supports standard DI registration via the `AddHidSharpUsbHid` extension methods. The implementation allows for the integration of [Polly](https://github.com/App-vNext/Polly) resilience pipelines for the endpoint opening process through the `HidSharpUsbHidServiceBuilder`. While adhering to the unified API, the underlying `HidDevice` instance remains accessible via the `IUsbHidDevice.UnderlyingDevice` property for library-specific operations.
 
 
 
