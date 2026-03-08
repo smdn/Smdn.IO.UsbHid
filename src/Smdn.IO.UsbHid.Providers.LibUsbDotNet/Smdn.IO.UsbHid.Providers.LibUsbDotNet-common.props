@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectOrPackageReference ReferencePackageVersion="1.0.0-preview2" Include="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
+    <ProjectOrPackageReference ReferencePackageVersion="1.0.0-preview3" Include="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
