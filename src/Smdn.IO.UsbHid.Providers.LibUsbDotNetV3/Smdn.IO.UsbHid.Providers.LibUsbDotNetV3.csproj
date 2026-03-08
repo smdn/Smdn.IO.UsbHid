@@ -28,6 +28,7 @@ this package is also released as a pre-release version due to NuGet restrictions
 
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.DependencyInjection\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Smdn.IO.UsbHid.Providers.LibUsbDotNet\Smdn.IO.UsbHid.Logging\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

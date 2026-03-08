@@ -286,7 +286,7 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   }
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidOpenEndPoint,
+    EventId = EventIds.OpenEndPointAttemptToOpen,
     Level = Microsoft.Extensions.Logging.LogLevel.Debug,
     Message = "Attempt to open device (Device: #{Device})"
   )]
@@ -295,7 +295,7 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   );
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidOpenEndPoint + 1,
+    EventId = EventIds.OpenEndPointAttemptToSetConfiguration,
     Level = Microsoft.Extensions.Logging.LogLevel.Debug,
     Message = "Attempt to set configuration (HID interface #{Number}, {Iface}): Configuration #{Configuration}."
   )]
@@ -306,7 +306,7 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   );
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidOpenEndPoint + 2,
+    EventId = EventIds.OpenEndPointSetConfigurationFailed,
     Level = Microsoft.Extensions.Logging.LogLevel.Critical,
     Message = "Attempt to open endpoint (HID interface #{Number}, {Iface}): Set configuration #{Configuration} failed."
   )]
@@ -318,7 +318,7 @@ public sealed partial class LibUsbDotNetUsbHidDevice : IUsbHidDevice<UsbDevice> 
   );
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidOpenEndPoint + 3,
+    EventId = EventIds.OpenEndPointClaimInterfaceFailed,
     Level = Microsoft.Extensions.Logging.LogLevel.Critical,
     Message = "Open endpoint failed (HID interface #{Number}, {Iface}): Claim interface #{Number} failed."
   )]

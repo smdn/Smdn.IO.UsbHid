@@ -16,8 +16,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Registry;
 
-using Smdn.IO.UsbHid.Logging;
-
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
@@ -31,6 +29,9 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   /// from the <see cref="ResiliencePipelineProvider{TKey}"/>.
   /// </summary>
   public static string ResiliencePipelineKeyForOpenEndPoint { get; } = nameof(HidSharpUsbHidDevice) + "." + nameof(resiliencePipelineOpenEndPoint);
+
+  private const int EventIdOpenEndPoint = 10;
+  private const int EventIdGetDeviceInfo = 20;
 
   private HidDevice? deviceImplementation;
 
@@ -169,7 +170,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   }
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidGetDeviceInfo,
+    EventId = EventIdGetDeviceInfo,
     Level = LogLevel.Trace,
     Message = "{ExceptionName} occurred while getting {DeviceInfo}."
   )]
@@ -273,7 +274,7 @@ public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   }
 
   [LoggerMessage(
-    EventId = EventIds.UsbHidOpenEndPoint,
+    EventId = EventIdOpenEndPoint,
     Level = LogLevel.Debug,
     Message = "Attempt to open endpoint ({Device})"
   )]
