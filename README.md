@@ -31,6 +31,12 @@ It offers specific configuration through `LibUsbDotNetOptions`, allowing users t
 
 
 
+# Smdn.IO.UsbHid.Providers.LibUsbDotNetV3
+[![NuGet Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/)
+
+A backend provider for `Smdn.IO.UsbHid.*` that utilizes the [LibUsbDotNet version 3 (alpha)](https://github.com/LibUsbDotNet/LibUsbDotNet) library.
+
+`Smdn.IO.UsbHid.Providers.LibUsbDotNet` uses the **stable release of LibUsbDotNet, version 2**, while `Smdn.IO.UsbHid.Providers.LibUsbDotNetV3` uses the presently **alpha release of LibUsbDotNet, version 3**. The implementation of this library itself is mostly stable, but since LibUsbDotNet v3 is still in alpha, it is released as a pre-release version.
 
 
 
