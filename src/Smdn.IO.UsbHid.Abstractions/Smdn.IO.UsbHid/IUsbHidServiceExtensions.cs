@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using Smdn.IO.UsbHid.Abstractions;
+
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
@@ -106,41 +108,14 @@ public static class IUsbHidServiceExtensions {
     Predicate<IUsbHidDevice>? predicate = null,
     CancellationToken cancellationToken = default
   )
-  {
-    if (usbHidService is null)
-      throw new ArgumentNullException(nameof(usbHidService));
-
-    var devices = usbHidService.GetDevices(cancellationToken);
-    IUsbHidDevice? matchedDevice = null;
-
-    try {
-      foreach (var device in devices) {
-        if (cancellationToken.IsCancellationRequested)
-          break;
-
-        if (vendorId.HasValue && device.VendorId != vendorId.Value)
-          continue;
-
-        if (productId.HasValue && device.ProductId != productId.Value)
-          continue;
-
-        if (predicate is null || predicate(device)) {
-          matchedDevice = device;
-          break;
-        }
-      }
-
-      return matchedDevice;
-    }
-    finally {
-      foreach (var device in devices) {
-        if (cancellationToken.IsCancellationRequested || !ReferenceEquals(device, matchedDevice))
-          device.Dispose();
-      }
-
-      cancellationToken.ThrowIfCancellationRequested();
-    }
-  }
+    => FindDeviceCore<NullUsbHidDevice>(
+      usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
+      vendorId: vendorId,
+      productId: productId,
+      predicate: predicate,
+      underlyingDevicePredicate: null,
+      cancellationToken: cancellationToken
+    );
 
   /// <summary>
   /// Finds a USB-HID device that matches the specified vendor ID, product ID, and
@@ -182,11 +157,26 @@ public static class IUsbHidServiceExtensions {
     Predicate<TDevice> predicate,
     CancellationToken cancellationToken = default
   ) where TDevice : notnull
+    => FindDeviceCore(
+      usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
+      vendorId: vendorId,
+      productId: productId,
+      predicate: null,
+      underlyingDevicePredicate: predicate ?? throw new ArgumentNullException(nameof(predicate)),
+      cancellationToken: cancellationToken
+    );
+
+  private static IUsbHidDevice? FindDeviceCore<TDevice>(
+    this IUsbHidService usbHidService,
+    int? vendorId,
+    int? productId,
+    Predicate<IUsbHidDevice>? predicate,
+    Predicate<TDevice>? underlyingDevicePredicate,
+    CancellationToken cancellationToken = default
+  ) where TDevice : notnull
   {
     if (usbHidService is null)
       throw new ArgumentNullException(nameof(usbHidService));
-    if (predicate is null)
-      throw new ArgumentNullException(nameof(predicate));
 
     var devices = usbHidService.GetDevices(cancellationToken);
     IUsbHidDevice? matchedDevice = null;
@@ -202,7 +192,16 @@ public static class IUsbHidServiceExtensions {
         if (productId.HasValue && device.ProductId != productId.Value)
           continue;
 
-        if (device is IUsbHidDevice<TDevice> d && predicate(d.UnderlyingDevice)) {
+        if (underlyingDevicePredicate is null) {
+          if (predicate is null || predicate(device)) {
+            matchedDevice = device;
+            break;
+          }
+        }
+        else if (
+          device is IUsbHidDevice<TDevice> { UnderlyingDevice: var underlyingDevice } &&
+          underlyingDevicePredicate(underlyingDevice)
+        ) {
           matchedDevice = device;
           break;
         }
