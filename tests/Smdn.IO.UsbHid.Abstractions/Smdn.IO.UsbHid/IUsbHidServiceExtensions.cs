@@ -323,7 +323,9 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfIUsbHidDevice_CancellationRequested()
+  public void FindDevice_OfIUsbHidDevice_CancellationRequested(
+    [Values] bool requestCancellationAfterGettingDeviceList
+  )
   {
     var devices = new PseudoUsbHidDevice[] {
       new(1, 0),
@@ -334,13 +336,18 @@ public class IUsbHidServiceExtensionsTests {
 
     using var cts = new CancellationTokenSource();
 
-    cts.Cancel();
+    if (!requestCancellationAfterGettingDeviceList)
+      cts.Cancel();
 
     Assert.That(
       () => usbHidService.FindDevice(
         vendorId: null,
         productId: null,
-        predicate: _ => true,
+        predicate: _ => {
+          if (requestCancellationAfterGettingDeviceList)
+            cts.Cancel();
+          return true;
+        },
         cancellationToken: cts.Token
       ),
       Throws
@@ -477,7 +484,9 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_CancellationRequested()
+  public void FindDevice_OfTDevice_CancellationRequested(
+    [Values] bool requestCancellationAfterGettingDeviceList
+  )
   {
     var devices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "mouse")),
@@ -488,13 +497,18 @@ public class IUsbHidServiceExtensionsTests {
 
     using var cts = new CancellationTokenSource();
 
-    cts.Cancel();
+    if (!requestCancellationAfterGettingDeviceList)
+      cts.Cancel();
 
     Assert.That(
       () => usbHidService.FindDevice<PseudoDevice>(
         vendorId: null,
         productId: null,
-        predicate: _ => true,
+        predicate: _ => {
+          if (requestCancellationAfterGettingDeviceList)
+            cts.Cancel();
+          return true;
+        },
         cancellationToken: cts.Token
       ),
       Throws
