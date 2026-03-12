@@ -42,6 +42,55 @@ public static class IUsbHidServiceExtensions {
     int? productId = null,
     CancellationToken cancellationToken = default
   )
+    => FindAllDevicesCore<NullUsbHidDevice>(
+      usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
+      vendorId: vendorId,
+      productId: productId,
+      predicate: null,
+      underlyingDevicePredicate: null,
+      cancellationToken: cancellationToken
+    );
+
+  public static IReadOnlyList<IUsbHidDevice> FindAllDevices(
+    this IUsbHidService usbHidService,
+    int? vendorId,
+    int? productId,
+    Predicate<IUsbHidDevice>? predicate = null,
+    CancellationToken cancellationToken = default
+  )
+    => FindAllDevicesCore<NullUsbHidDevice>(
+      usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
+      vendorId: vendorId,
+      productId: productId,
+      predicate: predicate,
+      underlyingDevicePredicate: null,
+      cancellationToken: cancellationToken
+    );
+
+  public static IReadOnlyList<IUsbHidDevice> FindAllDevices<TDevice>(
+    this IUsbHidService usbHidService,
+    int? vendorId,
+    int? productId,
+    Predicate<TDevice> predicate,
+    CancellationToken cancellationToken = default
+  ) where TDevice : notnull
+    => FindAllDevicesCore(
+      usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
+      vendorId: vendorId,
+      productId: productId,
+      predicate: null,
+      underlyingDevicePredicate: predicate ?? throw new ArgumentNullException(nameof(predicate)),
+      cancellationToken: cancellationToken
+    );
+
+  private static List<IUsbHidDevice> FindAllDevicesCore<TDevice>(
+    this IUsbHidService usbHidService,
+    int? vendorId,
+    int? productId,
+    Predicate<IUsbHidDevice>? predicate,
+    Predicate<TDevice>? underlyingDevicePredicate,
+    CancellationToken cancellationToken = default
+  ) where TDevice : notnull
   {
     if (usbHidService is null)
       throw new ArgumentNullException(nameof(usbHidService));
@@ -60,13 +109,26 @@ public static class IUsbHidServiceExtensions {
         if (productId.HasValue && device.ProductId != productId.Value)
           continue;
 
-        filteredDevices.Add(device);
+        if (underlyingDevicePredicate is null) {
+          if (predicate is null || predicate(device))
+            filteredDevices.Add(device);
+        }
+        else if (
+          device is IUsbHidDevice<TDevice> { UnderlyingDevice: var underlyingDevice } &&
+          underlyingDevicePredicate(underlyingDevice)
+        ) {
+          filteredDevices.Add(device);
+        }
       }
 
       return filteredDevices;
     }
     finally {
-      foreach (var device in devices.Except(filteredDevices)) {
+      var devicesToBeDisposed = cancellationToken.IsCancellationRequested
+        ? devices
+        : devices.Except(filteredDevices);
+
+      foreach (var device in devicesToBeDisposed) {
         device.Dispose();
       }
 
@@ -175,9 +237,6 @@ public static class IUsbHidServiceExtensions {
     CancellationToken cancellationToken = default
   ) where TDevice : notnull
   {
-    if (usbHidService is null)
-      throw new ArgumentNullException(nameof(usbHidService));
-
     var devices = usbHidService.GetDevices(cancellationToken);
     IUsbHidDevice? matchedDevice = null;
 

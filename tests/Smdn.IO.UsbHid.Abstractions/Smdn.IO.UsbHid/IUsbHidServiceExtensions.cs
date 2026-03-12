@@ -224,6 +224,309 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
+  public void FindAllDevices_OfIUsbHidDevice_ArgumentNullException()
+  {
+    IUsbHidService? usbHidService = null;
+
+    Assert.That(
+      () => usbHidService!.FindAllDevices(
+        vendorId: null,
+        productId: null,
+        predicate: null,
+        cancellationToken: default
+      ),
+      Throws
+        .ArgumentNullException
+        .With
+        .Property(nameof(ArgumentNullException.ParamName))
+        .EqualTo("usbHidService")
+    );
+  }
+
+  [Test]
+  public void FindAllDevices_OfIUsbHidDevice()
+  {
+    var allDevices = new PseudoUsbHidDevice[] {
+      new(1, 1, "mouse"),
+      new(1, 2, "keyboard"),
+      new(1, 3, "touchscreen"),
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices(
+      vendorId: null,
+      productId: null,
+      predicate: d => d is PseudoUsbHidDevice { DeviceType: "keyboard" or "touchscreen" }
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.EqualTo(2));
+
+    Assert.That(devices[0], Is.SameAs(allDevices[1]));
+    Assert.That(devices[1], Is.SameAs(allDevices[2]));
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.False, "device 1 not disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.False, "device 2 not disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfIUsbHidDevice_WithVendorIdAndProductId()
+  {
+    var allDevices = new PseudoUsbHidDevice[] {
+      new(1, 1, "keyboard"), // disposed (vid mismatch)
+      new(2, 1, "mouse"), // disposed (predicate mismatch)
+      new(2, 1, "keyboard"), // match
+      new(2, 1, "touchscreen"), // disposed (predicate mismatch)
+      new(2, 1, "keyboard"), // match
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices(
+      vendorId: 2,
+      productId: 1,
+      predicate: d => d is PseudoUsbHidDevice { DeviceType: "keyboard" }
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.EqualTo(2));
+
+    Assert.That(devices[0], Is.SameAs(allDevices[2]));
+    Assert.That(devices[1], Is.SameAs(allDevices[4]));
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.True, "device 1 disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.False, "device 2 not disposed");
+    Assert.That(allDevices[3].IsDisposed, Is.True, "device 3 disposed");
+    Assert.That(allDevices[4].IsDisposed, Is.False, "device 4 not disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfIUsbHidDevice_NothingMatched()
+  {
+    var allDevices = new PseudoUsbHidDevice[] {
+      new(1, 1, "mouse"),
+      new(1, 2, "keyboard"),
+      new(1, 3, "touchscreen"),
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices(
+      vendorId: null,
+      productId: null,
+      predicate: d => d is PseudoUsbHidDevice { DeviceType: "gamepad" }
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.Zero);
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.True, "device 1 disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.True, "device 2 disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfIUsbHidDevice_CancellationRequested(
+    [Values] bool requestCancellationAfterGettingDeviceList
+  )
+  {
+    var devices = new PseudoUsbHidDevice[] {
+      new(1, 0),
+      new(1, 1),
+      new(1, 2),
+    };
+    var usbHidService = new PseudoUsbHidService(devices);
+
+    using var cts = new CancellationTokenSource();
+
+    if (!requestCancellationAfterGettingDeviceList)
+      cts.Cancel();
+
+    Assert.That(
+      () => usbHidService.FindAllDevices(
+        vendorId: null,
+        productId: null,
+        predicate: _ => {
+          if (requestCancellationAfterGettingDeviceList)
+            cts.Cancel();
+          return true;
+        },
+        cancellationToken: cts.Token
+      ),
+      Throws
+        .InstanceOf<OperationCanceledException>()
+        .With
+        .Property(nameof(OperationCanceledException.CancellationToken))
+        .EqualTo(cts.Token)
+    );
+
+    for (var i = 0; i < devices.Length; i++) {
+      Assert.That(devices[i].IsDisposed, Is.True, $"devices[{i}] disposed");
+    }
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice_ArgumentNullException_UsbHidService()
+  {
+    IUsbHidService? usbHidService = null;
+
+    Assert.That(
+      () => usbHidService!.FindAllDevices<PseudoDevice>(
+        vendorId: null,
+        productId: null,
+        predicate: _ => true,
+        cancellationToken: default
+      ),
+      Throws
+        .ArgumentNullException
+        .With
+        .Property(nameof(ArgumentNullException.ParamName))
+        .EqualTo("usbHidService")
+    );
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice_ArgumentNullException_Predicate()
+  {
+    var usbHidService = new PseudoUsbHidService([]);
+
+    Assert.That(
+      () => usbHidService.FindAllDevices<PseudoDevice>(
+        vendorId: null,
+        productId: null,
+        predicate: null!,
+        cancellationToken: default
+      ),
+      Throws
+        .ArgumentNullException
+        .With
+        .Property(nameof(ArgumentNullException.ParamName))
+        .EqualTo("predicate")
+    );
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice()
+  {
+    var allDevices = new PseudoUsbHidDeviceWrapper[] {
+      new(new(1, 1, "mouse")),
+      new(new(1, 2, "keyboard")),
+      new(new(1, 3, "touchscreen")),
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices<PseudoDevice>(
+      vendorId: null,
+      productId: null,
+      predicate: d => d.DeviceType == "keyboard"
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.EqualTo(1));
+
+    Assert.That(devices[0], Is.SameAs(allDevices[1]));
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.False, "device 1 not disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.True, "device 2 disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice_WithVendorIdAndProductId()
+  {
+    var allDevices = new PseudoUsbHidDeviceWrapper[] {
+      new(new(1, 1, "keyboard")), // disposed (vid mismatch)
+      new(new(2, 1, "mouse")), // disposed (predicate mismatch)
+      new(new(2, 1, "keyboard")), // matched
+      new(new(2, 1, "touchscreen")), // disposed (predicate mismatch)
+      new(new(2, 1, "keyboard")), // matched
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices<PseudoDevice>(
+      vendorId: 2,
+      productId: 1,
+      predicate: d => d.DeviceType == "keyboard"
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.EqualTo(2));
+
+    Assert.That(devices[0], Is.SameAs(allDevices[2]));
+    Assert.That(devices[1], Is.SameAs(allDevices[4]));
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.True, "device 1 disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.False, "device 2 not disposed");
+    Assert.That(allDevices[3].IsDisposed, Is.True, "device 3 disposed");
+    Assert.That(allDevices[4].IsDisposed, Is.False, "device 4 not disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice_NothingMatched()
+  {
+    var allDevices = new PseudoUsbHidDeviceWrapper[] {
+      new(new(1, 1, "mouse")),
+      new(new(1, 2, "keyboard")),
+      new(new(1, 3, "touchscreen")),
+    };
+    var usbHidService = new PseudoUsbHidService(allDevices);
+
+    var devices = usbHidService.FindAllDevices<PseudoDevice>(
+      vendorId: null,
+      productId: null,
+      predicate: d => d.DeviceType == "gamepad"
+    );
+
+    Assert.That(devices, Is.Not.Null);
+    Assert.That(devices.Count, Is.Zero);
+
+    Assert.That(allDevices[0].IsDisposed, Is.True, "device 0 disposed");
+    Assert.That(allDevices[1].IsDisposed, Is.True, "device 1 disposed");
+    Assert.That(allDevices[2].IsDisposed, Is.True, "device 2 disposed");
+  }
+
+  [Test]
+  public void FindAllDevices_OfTDevice_CancellationRequested(
+    [Values] bool requestCancellationAfterGettingDeviceList
+  )
+  {
+    var devices = new PseudoUsbHidDeviceWrapper[] {
+      new(new(1, 1, "mouse")),
+      new(new(1, 2, "keyboard")),
+      new(new(1, 3, "touchscreen")),
+    };
+    var usbHidService = new PseudoUsbHidService(devices);
+
+    using var cts = new CancellationTokenSource();
+
+    if (!requestCancellationAfterGettingDeviceList)
+      cts.Cancel();
+
+    Assert.That(
+      () => usbHidService.FindAllDevices<PseudoDevice>(
+        vendorId: null,
+        productId: null,
+        predicate: _ => {
+          if (requestCancellationAfterGettingDeviceList)
+            cts.Cancel();
+          return true;
+        },
+        cancellationToken: cts.Token
+      ),
+      Throws
+        .InstanceOf<OperationCanceledException>()
+        .With
+        .Property(nameof(OperationCanceledException.CancellationToken))
+        .EqualTo(cts.Token)
+    );
+
+    for (var i = 0; i < devices.Length; i++) {
+      Assert.That(devices[i].IsDisposed, Is.True, $"devices[{i}] disposed");
+    }
+  }
+
+  [Test]
   public void FindDevice_OfIUsbHidDevice_ArgumentNullException()
   {
     IUsbHidService? usbHidService = null;
