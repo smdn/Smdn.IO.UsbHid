@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Providers.HidSharp.dll (Smdn.IO.UsbHid.Providers.HidSharp-1.0.0-preview3)
+// Smdn.IO.UsbHid.Providers.HidSharp.dll (Smdn.IO.UsbHid.Providers.HidSharp-1.0.0-preview4)
 //   Name: Smdn.IO.UsbHid.Providers.HidSharp
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview3+f1cc8729011e4f92a8ec7f2d2964048385e37942
+//   InformationalVersion: 1.0.0-preview4+b835c2f44d76e9915d9435892a1b2736a3cb4dbd
 //   TargetFramework: .NETFramework,Version=v4.6.2
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=f1cc8729011e4f92a8ec7f2d2964048385e37942
+//   Metadata: RepositoryCommit=b835c2f44d76e9915d9435892a1b2736a3cb4dbd
 //   Referenced assemblies:
 //     HidSharp, Version=2.1.0.0, Culture=neutral
 //     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
