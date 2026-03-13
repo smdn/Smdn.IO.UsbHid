@@ -141,7 +141,7 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
     using var usbHidDevice = usbHidService.FindDevice(vendorId: null, productId: null, predicate: static _ => true);
 
     if (usbHidDevice is null) {
-      Assert.Ignore("No USB-HID device found; cannot verify that the keyed ILoggerFactory is used");
+      Assert.Ignore("No USB HID device found; cannot verify that the keyed ILoggerFactory is used");
     }
     else {
       Assert.That(defaultLoggerFactory.CreateCalled, Is.False, "default ILoggerFactory must not be used");
@@ -186,7 +186,7 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
     using var usbHidDevice = usbHidService.FindDevice(vendorId: null, productId: null, predicate: static _ => true);
 
     if (usbHidDevice is null)
-      Assert.Ignore("No USB-HID device found; cannot verify that the keyed ILoggerFactory is used");
+      Assert.Ignore("No USB HID device found; cannot verify that the keyed ILoggerFactory is used");
     else
       Assert.That(defaultLoggerFactory.CreateCalled, Is.True, "default ILoggerFactory must be used");
   }

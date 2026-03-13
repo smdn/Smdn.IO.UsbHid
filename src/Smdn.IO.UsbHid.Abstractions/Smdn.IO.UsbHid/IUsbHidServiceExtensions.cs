@@ -15,7 +15,7 @@ namespace Smdn.IO.UsbHid;
 /// </summary>
 public static class IUsbHidServiceExtensions {
   /// <summary>
-  /// Gets a list of USB-HID devices that match the specified vendor and product IDs.
+  /// Gets a list of USB HID devices that match the specified vendor and product IDs.
   /// </summary>
   /// <param name="usbHidService">
   /// The <see cref="IUsbHidService"/> to use for device enumeration.
@@ -137,7 +137,7 @@ public static class IUsbHidServiceExtensions {
   }
 
   /// <summary>
-  /// Finds a USB-HID device that matches the specified vendor ID, product ID, and/or predicate.
+  /// Finds a USB HID device that matches the specified vendor ID, product ID, and/or predicate.
   /// </summary>
   /// <param name="usbHidService">
   /// The <see cref="IUsbHidService"/> to use for device enumeration.
@@ -180,7 +180,7 @@ public static class IUsbHidServiceExtensions {
     );
 
   /// <summary>
-  /// Finds a USB-HID device that matches the specified vendor ID, product ID, and
+  /// Finds a USB HID device that matches the specified vendor ID, product ID, and
   /// a predicate on the implementation-specific device object.
   /// </summary>
   /// <param name="usbHidService">

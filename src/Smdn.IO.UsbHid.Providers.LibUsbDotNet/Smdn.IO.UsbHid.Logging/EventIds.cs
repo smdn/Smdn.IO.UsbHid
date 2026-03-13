@@ -4,7 +4,7 @@ namespace Smdn.IO.UsbHid.Logging;
 
 /// <summary>
 /// Defines the event IDs commonly used for logging with
-/// <see cref="Microsoft.Extensions.Logging.ILogger"/> in USB-HID device operations.
+/// <see cref="Microsoft.Extensions.Logging.ILogger"/> in USB HID device operations.
 /// </summary>
 internal static class EventIds {
   public const int OpenEndPointAttemptToOpen = 10;

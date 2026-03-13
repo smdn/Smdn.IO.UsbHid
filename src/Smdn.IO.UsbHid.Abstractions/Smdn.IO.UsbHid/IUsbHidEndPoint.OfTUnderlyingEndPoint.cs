@@ -4,7 +4,7 @@
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// Provides a mechanism to abstract reading from and writing to USB-HID report endpoints,
+/// Provides a mechanism to abstract reading from and writing to USB HID report endpoints,
 /// and provides properties for accessing the underlying endpoint objects used by
 /// the backend library.
 /// </summary>

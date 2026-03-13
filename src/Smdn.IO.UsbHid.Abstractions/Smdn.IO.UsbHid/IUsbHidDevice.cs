@@ -11,24 +11,24 @@ using System.Threading.Tasks;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// Provides a mechanism to abstract and operate USB-HID devices.
+/// Provides a mechanism to abstract and operate USB HID devices.
 /// </summary>
 public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
   /// <summary>
-  /// Gets the vendor ID of the USB-HID device.
+  /// Gets the vendor ID of the USB HID device.
   /// </summary>
   int VendorId { get; }
 
   /// <summary>
-  /// Gets the product ID of the USB-HID device.
+  /// Gets the product ID of the USB HID device.
   /// </summary>
   int ProductId { get; }
 
   /// <summary>
-  /// Attempts to get the product name of the USB-HID device.
+  /// Attempts to get the product name of the USB HID device.
   /// </summary>
   /// <param name="productName">
-  /// When this method returns, contains the product name of the USB-HID device,
+  /// When this method returns, contains the product name of the USB HID device,
   /// if the product name can be retrieved; otherwise, <see langword="null"/>.
   /// </param>
   /// <returns>
@@ -43,10 +43,10 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
   );
 
   /// <summary>
-  /// Attempts to get the manufacturer of the USB-HID device.
+  /// Attempts to get the manufacturer of the USB HID device.
   /// </summary>
   /// <param name="manufacturer">
-  /// When this method returns, contains the manufacturer of the USB-HID device,
+  /// When this method returns, contains the manufacturer of the USB HID device,
   /// if the manufacturer can be retrieved; otherwise, <see langword="null"/>.
   /// </param>
   /// <returns>
@@ -61,10 +61,10 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
   );
 
   /// <summary>
-  /// Attempts to get the serial number of the USB-HID device.
+  /// Attempts to get the serial number of the USB HID device.
   /// </summary>
   /// <param name="serialNumber">
-  /// When this method returns, contains the serial number of the USB-HID device,
+  /// When this method returns, contains the serial number of the USB HID device,
   /// if the serial number can be retrieved; otherwise, <see langword="null"/>.
   /// </param>
   /// <returns>

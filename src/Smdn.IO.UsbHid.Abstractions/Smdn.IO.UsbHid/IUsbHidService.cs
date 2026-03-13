@@ -8,11 +8,11 @@ using System.Threading;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// Provides services for discovering and managing USB-HID devices.
+/// Provides services for discovering and managing USB HID devices.
 /// </summary>
 public interface IUsbHidService : IDisposable, IAsyncDisposable {
   /// <summary>
-  /// Gets a read-only list of all USB-HID devices currently available on the system.
+  /// Gets a read-only list of all USB HID devices currently available on the system.
   /// </summary>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
 /// <summary>
-/// Provides a builder for configuring USB-HID services.
+/// Provides a builder for configuring USB HID services.
 /// </summary>
 [CLSCompliant(false)] // IServiceCollection is not CLS compliant
 public abstract class UsbHidServiceBuilder<TServiceKey>(
@@ -16,12 +16,12 @@ public abstract class UsbHidServiceBuilder<TServiceKey>(
   Func<TServiceKey, string?>? selectOptionsNameForServiceKey
 ) {
   /// <summary>
-  /// Gets the <see cref="IServiceCollection"/> where the USB-HID services are configured.
+  /// Gets the <see cref="IServiceCollection"/> where the USB HID services are configured.
   /// </summary>
   public IServiceCollection Services { get; } = services ?? throw new ArgumentNullException(nameof(services));
 
   /// <summary>
-  /// Gets the <typeparamref name="TServiceKey"/> key for configured USB-HID services.
+  /// Gets the <typeparamref name="TServiceKey"/> key for configured USB HID services.
   /// </summary>
   /// <remarks>
   /// If a key is not explicitly specified, the type of <typeparamref name="TServiceKey"/>

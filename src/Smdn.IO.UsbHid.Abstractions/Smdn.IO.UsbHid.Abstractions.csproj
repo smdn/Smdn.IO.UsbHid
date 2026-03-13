@@ -18,7 +18,7 @@ SPDX-License-Identifier: MIT
 focusing on HID report I/O operations. It serves as a backend-agnostic foundation that allows applications
 to switch between different hardware access implementations through dependency injection.
 
-The following packages are available for the USB-HID backend providers:
+The following packages are available for the USB HID backend providers:
 
 - [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)

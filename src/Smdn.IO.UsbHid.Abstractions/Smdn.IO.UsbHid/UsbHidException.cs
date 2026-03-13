@@ -6,7 +6,7 @@ using System;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// The exception that is thrown when an error occurs during a USB-HID device operation.
+/// The exception that is thrown when an error occurs during a USB HID device operation.
 /// </summary>
 public class UsbHidException : InvalidOperationException {
   public UsbHidException()

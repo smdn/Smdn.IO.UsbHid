@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// Provides a mechanism to abstract reading from and writing to USB-HID report endpoints.
+/// Provides a mechanism to abstract reading from and writing to USB HID report endpoints.
 /// </summary>
 public interface IUsbHidEndPoint : IDisposable, IAsyncDisposable {
   /// <summary>
