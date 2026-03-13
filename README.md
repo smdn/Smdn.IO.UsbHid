@@ -45,6 +45,7 @@ More examples can be found in following examples directory.
 
 - [Smdn.IO.UsbHid.Providers.HidSharp examples](examples/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet examples](examples/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
+- [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3 examples](examples/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)
 
 # Troubleshooting
 ## DllImport resolving
