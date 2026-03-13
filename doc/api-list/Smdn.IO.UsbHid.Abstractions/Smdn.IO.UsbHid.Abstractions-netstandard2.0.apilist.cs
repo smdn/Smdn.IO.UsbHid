@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0-preview3)
+// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0-preview4)
 //   Name: Smdn.IO.UsbHid.Abstractions
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview3+e6609dc8e8a36618e863c7b9c3888e6a77da5601
+//   InformationalVersion: 1.0.0-preview4+b7044df27092d278564bc08759155314a915b3c7
 //   TargetFramework: .NETStandard,Version=v2.0
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=e6609dc8e8a36618e863c7b9c3888e6a77da5601
+//   Metadata: RepositoryCommit=b7044df27092d278564bc08759155314a915b3c7
 //   Referenced assemblies:
 //     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Smdn.IO.UsbHid;
+using Smdn.IO.UsbHid.Abstractions;
 
 namespace Smdn.IO.UsbHid {
   public interface IUsbHidDevice :
@@ -38,8 +39,8 @@ namespace Smdn.IO.UsbHid {
     bool TryGetSerialNumber(out string? serialNumber);
   }
 
-  public interface IUsbHidDevice<TDevice> : IUsbHidDevice where TDevice : notnull {
-    TDevice UnderlyingDevice { get; }
+  public interface IUsbHidDevice<TUnderlyingDevice> : IUsbHidDevice where TUnderlyingDevice : notnull {
+    TUnderlyingDevice UnderlyingDevice { get; }
   }
 
   public interface IUsbHidEndPoint :
@@ -56,9 +57,9 @@ namespace Smdn.IO.UsbHid {
     ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken);
   }
 
-  public interface IUsbHidEndPoint<TReadEndPoint, TWriteEndPoint> : IUsbHidEndPoint {
-    TReadEndPoint ReadEndPoint { get; }
-    TWriteEndPoint WriteEndPoint { get; }
+  public interface IUsbHidEndPoint<TUnderlyingReadEndPoint, TUnderlyingWriteEndPoint> : IUsbHidEndPoint {
+    TUnderlyingReadEndPoint ReadEndPoint { get; }
+    TUnderlyingWriteEndPoint WriteEndPoint { get; }
   }
 
   public interface IUsbHidService :
@@ -79,8 +80,10 @@ namespace Smdn.IO.UsbHid {
   }
 
   public static class IUsbHidServiceExtensions {
+    public static IReadOnlyList<IUsbHidDevice> FindAllDevices(this IUsbHidService usbHidService, int? vendorId, int? productId, Predicate<IUsbHidDevice>? predicate = null, CancellationToken cancellationToken = default) {}
+    public static IReadOnlyList<IUsbHidDevice> FindAllDevices<TUnderlyingDevice>(this IUsbHidService usbHidService, int? vendorId, int? productId, Predicate<TUnderlyingDevice> predicate, CancellationToken cancellationToken = default) where TUnderlyingDevice : notnull {}
     public static IUsbHidDevice? FindDevice(this IUsbHidService usbHidService, int? vendorId, int? productId, Predicate<IUsbHidDevice>? predicate = null, CancellationToken cancellationToken = default) {}
-    public static IUsbHidDevice? FindDevice<TDevice>(this IUsbHidService usbHidService, int? vendorId, int? productId, Predicate<TDevice> predicate, CancellationToken cancellationToken = default) where TDevice : notnull {}
+    public static IUsbHidDevice? FindDevice<TUnderlyingDevice>(this IUsbHidService usbHidService, int? vendorId, int? productId, Predicate<TUnderlyingDevice> predicate, CancellationToken cancellationToken = default) where TUnderlyingDevice : notnull {}
     public static IReadOnlyList<IUsbHidDevice> GetDevices(this IUsbHidService usbHidService, int? vendorId = null, int? productId = null, CancellationToken cancellationToken = default) {}
   }
 
@@ -88,6 +91,54 @@ namespace Smdn.IO.UsbHid {
     public UsbHidException() {}
     public UsbHidException(string? message) {}
     public UsbHidException(string? message, Exception? innerException) {}
+  }
+}
+
+namespace Smdn.IO.UsbHid.Abstractions {
+  public sealed class NullUsbHidDevice : IUsbHidDevice<NullUsbHidUnderlyingDevice> {
+    public static NullUsbHidDevice Instance { get; } // = "Smdn.IO.UsbHid.Abstractions.NullUsbHidDevice"
+
+    public int ProductId { get; }
+    public NullUsbHidUnderlyingDevice UnderlyingDevice { get; }
+    public int VendorId { get; }
+
+    public void Dispose() {}
+    public ValueTask DisposeAsync() {}
+    public IUsbHidEndPoint OpenEndPoint(bool openOutEndPoint, bool openInEndPoint, bool shouldDisposeDevice, CancellationToken cancellationToken) {}
+    public ValueTask<IUsbHidEndPoint> OpenEndPointAsync(bool openOutEndPoint, bool openInEndPoint, bool shouldDisposeDevice, CancellationToken cancellationToken) {}
+    public bool TryGetDeviceIdentifier(out string? deviceIdentifier) {}
+    public bool TryGetManufacturer(out string? manufacturer) {}
+    public bool TryGetProductName(out string? productName) {}
+    public bool TryGetSerialNumber(out string? serialNumber) {}
+  }
+
+  public sealed class NullUsbHidEndPoint : IUsbHidEndPoint<NullUsbHidUnderlyingReadEndPoint, NullUsbHidUnderlyingWriteEndPoint> {
+    public static NullUsbHidEndPoint Instance { get; } // = "Smdn.IO.UsbHid.Abstractions.NullUsbHidEndPoint"
+
+    public bool CanRead { get; }
+    public bool CanWrite { get; }
+    public IUsbHidDevice Device { get; }
+    public NullUsbHidUnderlyingReadEndPoint ReadEndPoint { get; }
+    public NullUsbHidUnderlyingWriteEndPoint WriteEndPoint { get; }
+
+    public void Dispose() {}
+    public ValueTask DisposeAsync() {}
+    public int Read(Span<byte> buffer, CancellationToken cancellationToken = default) {}
+    public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) {}
+    public void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken = default) {}
+    public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) {}
+  }
+
+  public sealed class NullUsbHidUnderlyingDevice {
+    public static NullUsbHidUnderlyingDevice Instance { get; } // = "Smdn.IO.UsbHid.Abstractions.NullUsbHidUnderlyingDevice"
+  }
+
+  public sealed class NullUsbHidUnderlyingReadEndPoint {
+    public static NullUsbHidUnderlyingReadEndPoint Instance { get; } // = "Smdn.IO.UsbHid.Abstractions.NullUsbHidUnderlyingReadEndPoint"
+  }
+
+  public sealed class NullUsbHidUnderlyingWriteEndPoint {
+    public static NullUsbHidUnderlyingWriteEndPoint Instance { get; } // = "Smdn.IO.UsbHid.Abstractions.NullUsbHidUnderlyingWriteEndPoint"
   }
 }
 
