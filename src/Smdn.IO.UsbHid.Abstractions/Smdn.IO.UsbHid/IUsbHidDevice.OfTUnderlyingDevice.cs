@@ -7,9 +7,13 @@ namespace Smdn.IO.UsbHid;
 /// Provides a mechanism to abstract and operate USB-HID devices,
 /// and provides a property for accessing the underlying device object used by the backend library.
 /// </summary>
-public interface IUsbHidDevice<TDevice> : IUsbHidDevice where TDevice : notnull {
+/// <typeparam name="TUnderlyingDevice">
+/// The type of the <see cref="UnderlyingDevice"/> property, which represents the
+/// implementation-dependent underlying device object.
+/// </typeparam>
+public interface IUsbHidDevice<TUnderlyingDevice> : IUsbHidDevice where TUnderlyingDevice : notnull {
   /// <summary>
   /// Gets the implementation-dependent underlying device object.
   /// </summary>
-  TDevice UnderlyingDevice { get; }
+  TUnderlyingDevice UnderlyingDevice { get; }
 }

@@ -3,7 +3,7 @@
 namespace Smdn.IO.UsbHid.Abstractions;
 
 /// <summary>
-/// Represents a null object implementation for the <see cref="IUsbHidEndPoint{TReadEndPoint, TWriteEndPoint}.ReadEndPoint"/>
+/// Represents a null object implementation for the <see cref="IUsbHidEndPoint{TUnderlyingReadEndPoint, TWriteEndPoint}.ReadEndPoint"/>
 /// property that performs no operations.
 /// </summary>
 /// <remarks>

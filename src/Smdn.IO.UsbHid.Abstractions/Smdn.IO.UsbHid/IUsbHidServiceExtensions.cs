@@ -67,13 +67,13 @@ public static class IUsbHidServiceExtensions {
       cancellationToken: cancellationToken
     );
 
-  public static IReadOnlyList<IUsbHidDevice> FindAllDevices<TDevice>(
+  public static IReadOnlyList<IUsbHidDevice> FindAllDevices<TUnderlyingDevice>(
     this IUsbHidService usbHidService,
     int? vendorId,
     int? productId,
-    Predicate<TDevice> predicate,
+    Predicate<TUnderlyingDevice> predicate,
     CancellationToken cancellationToken = default
-  ) where TDevice : notnull
+  ) where TUnderlyingDevice : notnull
     => FindAllDevicesCore(
       usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
       vendorId: vendorId,
@@ -83,14 +83,14 @@ public static class IUsbHidServiceExtensions {
       cancellationToken: cancellationToken
     );
 
-  private static List<IUsbHidDevice> FindAllDevicesCore<TDevice>(
+  private static List<IUsbHidDevice> FindAllDevicesCore<TUnderlyingDevice>(
     this IUsbHidService usbHidService,
     int? vendorId,
     int? productId,
     Predicate<IUsbHidDevice>? predicate,
-    Predicate<TDevice>? underlyingDevicePredicate,
+    Predicate<TUnderlyingDevice>? underlyingDevicePredicate,
     CancellationToken cancellationToken = default
-  ) where TDevice : notnull
+  ) where TUnderlyingDevice : notnull
   {
     if (usbHidService is null)
       throw new ArgumentNullException(nameof(usbHidService));
@@ -114,7 +114,7 @@ public static class IUsbHidServiceExtensions {
             filteredDevices.Add(device);
         }
         else if (
-          device is IUsbHidDevice<TDevice> { UnderlyingDevice: var underlyingDevice } &&
+          device is IUsbHidDevice<TUnderlyingDevice> { UnderlyingDevice: var underlyingDevice } &&
           underlyingDevicePredicate(underlyingDevice)
         ) {
           filteredDevices.Add(device);
@@ -212,13 +212,13 @@ public static class IUsbHidServiceExtensions {
   /// </remarks>
   /// <seealso cref="IUsbHidService.GetDevices(CancellationToken)"/>
   /// <seealso cref="IUsbHidDevice{T}.UnderlyingDevice"/>
-  public static IUsbHidDevice? FindDevice<TDevice>(
+  public static IUsbHidDevice? FindDevice<TUnderlyingDevice>(
     this IUsbHidService usbHidService,
     int? vendorId,
     int? productId,
-    Predicate<TDevice> predicate,
+    Predicate<TUnderlyingDevice> predicate,
     CancellationToken cancellationToken = default
-  ) where TDevice : notnull
+  ) where TUnderlyingDevice : notnull
     => FindDeviceCore(
       usbHidService: usbHidService ?? throw new ArgumentNullException(nameof(usbHidService)),
       vendorId: vendorId,
@@ -228,14 +228,14 @@ public static class IUsbHidServiceExtensions {
       cancellationToken: cancellationToken
     );
 
-  private static IUsbHidDevice? FindDeviceCore<TDevice>(
+  private static IUsbHidDevice? FindDeviceCore<TUnderlyingDevice>(
     this IUsbHidService usbHidService,
     int? vendorId,
     int? productId,
     Predicate<IUsbHidDevice>? predicate,
-    Predicate<TDevice>? underlyingDevicePredicate,
+    Predicate<TUnderlyingDevice>? underlyingDevicePredicate,
     CancellationToken cancellationToken = default
-  ) where TDevice : notnull
+  ) where TUnderlyingDevice : notnull
   {
     var devices = usbHidService.GetDevices(cancellationToken);
     IUsbHidDevice? matchedDevice = null;
@@ -258,7 +258,7 @@ public static class IUsbHidServiceExtensions {
           }
         }
         else if (
-          device is IUsbHidDevice<TDevice> { UnderlyingDevice: var underlyingDevice } &&
+          device is IUsbHidDevice<TUnderlyingDevice> { UnderlyingDevice: var underlyingDevice } &&
           underlyingDevicePredicate(underlyingDevice)
         ) {
           matchedDevice = device;

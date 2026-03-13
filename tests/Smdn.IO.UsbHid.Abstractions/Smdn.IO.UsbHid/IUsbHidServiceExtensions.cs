@@ -366,7 +366,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice_ArgumentNullException_UsbHidService()
+  public void FindAllDevices_OfTUnderlyingDevice_ArgumentNullException_UsbHidService()
   {
     IUsbHidService? usbHidService = null;
 
@@ -386,7 +386,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice_ArgumentNullException_Predicate()
+  public void FindAllDevices_OfTUnderlyingDevice_ArgumentNullException_Predicate()
   {
     var usbHidService = new PseudoUsbHidService([]);
 
@@ -406,7 +406,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice()
+  public void FindAllDevices_OfTUnderlyingDevice()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "mouse")),
@@ -432,7 +432,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice_WithVendorIdAndProductId()
+  public void FindAllDevices_OfTUnderlyingDevice_WithVendorIdAndProductId()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "keyboard")), // disposed (vid mismatch)
@@ -463,7 +463,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice_NothingMatched()
+  public void FindAllDevices_OfTUnderlyingDevice_NothingMatched()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "mouse")),
@@ -487,7 +487,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindAllDevices_OfTDevice_CancellationRequested(
+  public void FindAllDevices_OfTUnderlyingDevice_CancellationRequested(
     [Values] bool requestCancellationAfterGettingDeviceList
   )
   {
@@ -666,7 +666,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_ArgumentNullException_UsbHidService()
+  public void FindDevice_OfTUnderlyingDevice_ArgumentNullException_UsbHidService()
   {
     IUsbHidService? usbHidService = null;
 
@@ -686,7 +686,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_ArgumentNullException_Predicate()
+  public void FindDevice_OfTUnderlyingDevice_ArgumentNullException_Predicate()
   {
     var usbHidService = new PseudoUsbHidService([]);
 
@@ -706,7 +706,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice()
+  public void FindDevice_OfTUnderlyingDevice()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "mouse")),
@@ -734,7 +734,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_WithVendorIdAndProductId()
+  public void FindDevice_OfTUnderlyingDevice_WithVendorIdAndProductId()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "keyboard")), // disposed (vid mismatch)
@@ -764,7 +764,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_NothingMatched()
+  public void FindDevice_OfTUnderlyingDevice_NothingMatched()
   {
     var allDevices = new PseudoUsbHidDeviceWrapper[] {
       new(new(1, 1, "mouse")),
@@ -787,7 +787,7 @@ public class IUsbHidServiceExtensionsTests {
   }
 
   [Test]
-  public void FindDevice_OfTDevice_CancellationRequested(
+  public void FindDevice_OfTUnderlyingDevice_CancellationRequested(
     [Values] bool requestCancellationAfterGettingDeviceList
   )
   {
