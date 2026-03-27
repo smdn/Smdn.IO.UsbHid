@@ -17,6 +17,8 @@ namespace Smdn.IO.UsbHid;
 /// LibUsbDotNet as the backend.
 /// </summary>
 public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
+  private const int LengthOfReportId = 1;
+
   private readonly bool shouldDisposeDevice;
 
   private LibUsbDotNetV3UsbHidDevice? device;
@@ -123,7 +125,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     if (buffer.IsEmpty)
       return;
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
@@ -178,7 +180,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     if (buffer.IsEmpty)
       return default;
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
@@ -237,7 +239,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     if (buffer.IsEmpty)
       return 0;
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxInEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
@@ -255,7 +257,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
       out var transferLength
     );
 
-    return transferLength;
+    return transferLength + LengthOfReportId;
   }
 
   /// <inheritdoc/>
@@ -274,7 +276,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
 #endif
     }
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxInEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
@@ -303,7 +305,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
         timeout: timeout
       ).ConfigureAwait(false);
 
-      return transferLength;
+      return transferLength + LengthOfReportId;
     }
   }
 

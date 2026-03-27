@@ -19,6 +19,8 @@ namespace Smdn.IO.UsbHid;
 /// LibUsbDotNet as the backend.
 /// </summary>
 public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
+  private const int LengthOfReportId = 1;
+
   private readonly bool shouldDisposeDevice;
 
   private LibUsbDotNetUsbHidDevice? device;
@@ -125,7 +127,7 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
     if (buffer.IsEmpty)
       return;
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
@@ -197,7 +199,7 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
     if (buffer.IsEmpty)
       return 0;
 
-    buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
+    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
 
     if (maxInEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
@@ -234,7 +236,7 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
 
         rentBuffer.AsSpan(0, transferLength).CopyTo(buffer);
 
-        return transferLength;
+        return transferLength + LengthOfReportId;
       }
       finally {
         if (rentBuffer is not null)
@@ -262,7 +264,7 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
     => new(
 #endif
 #pragma warning disable CA2000
-      result: Read(buffer.Span, cancellationToken)
+      result: Read(buffer.Span, cancellationToken) + LengthOfReportId
     );
 
   public override string? ToString()
