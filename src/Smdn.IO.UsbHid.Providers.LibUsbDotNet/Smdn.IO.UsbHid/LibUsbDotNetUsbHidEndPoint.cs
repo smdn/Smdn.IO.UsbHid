@@ -264,7 +264,7 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
     => new(
 #endif
 #pragma warning disable CA2000
-      result: Read(buffer.Span, cancellationToken) + LengthOfReportId
+      result: Read(buffer.Span, cancellationToken)
     );
 
   public override string? ToString()
