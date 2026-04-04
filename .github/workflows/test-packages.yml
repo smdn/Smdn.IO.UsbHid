@@ -56,20 +56,20 @@ jobs:
   await-package-publishing:
     name: Wait for publishing of released package
     if: ${{ github.event_name == 'release' }}
-    uses: smdn/workflows-dotnet/.github/workflows/nuget-await-package-publishing.yml@nuget/v1.1.1
+    uses: smdn/workflows-dotnet/.github/workflows/nuget-await-package-publishing.yml@2d28feed1b06fb1de2a65c5862c206e8afce9aaf # nuget/v1.1.1
     with:
       release_tag: ${{ github.event.release.tag_name }}
 
   run-test:
     name: Run tests with released packages
-    uses: smdn/workflows-dotnet/.github/workflows/test.yml@test/v1.9.0
+    uses: smdn/workflows-dotnet/.github/workflows/test.yml@ea0a480137fc3227427d82f4c40614f298822025 # test/v1.9.1
     needs: await-package-publishing
     if: ${{ always() && !failure() && !cancelled() }} # run tests even if await-package-publishing is skipped
     with:
       project:                                ${{ inputs.project }}
       os:                                     ${{ inputs.os == '' && 'ubuntu-24.04, ubuntu-22.04, windows-latest, macos-latest' || inputs.os }}
       extra_options_common:                   '/p:TestReleasedPackage=true'
-      verbose:                                ${{ inputs.verbose == 'true' }}
+      verbose:                                ${{ inputs.verbose == true }}
       dotnet_sdk_version:                     ${{ inputs.dotnet_sdk_version == '' && '10.0.100' || inputs.dotnet_sdk_version }}
       timeout_minutes_test_job:               10
       timeout_hang:                           "[ {'OS':'windows','Timeout':'6min'}, {'OS':'macos','Timeout':'3min'}, {'OS':'','Timeout':'1min'} ]"
