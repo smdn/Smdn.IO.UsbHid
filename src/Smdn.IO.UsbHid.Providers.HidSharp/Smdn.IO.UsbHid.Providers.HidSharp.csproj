@@ -25,7 +25,7 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectOrPackageReference ReferencePackageVersion="1.0.0-preview4" Include="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
+    <ProjectOrPackageReference ReferencePackageVersion="1.0.0" Include="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
