@@ -1,13 +1,13 @@
-// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0-preview4)
+// Smdn.IO.UsbHid.Abstractions.dll (Smdn.IO.UsbHid.Abstractions-1.0.0)
 //   Name: Smdn.IO.UsbHid.Abstractions
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview4+b7044df27092d278564bc08759155314a915b3c7
+//   InformationalVersion: 1.0.0+b3fb489a540b6f3b09c308dcc0617ae282845a1e
 //   TargetFramework: .NETCoreApp,Version=v8.0
 //   Configuration: Release
 //   Metadata: IsTrimmable=True
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=b7044df27092d278564bc08759155314a915b3c7
+//   Metadata: RepositoryCommit=b3fb489a540b6f3b09c308dcc0617ae282845a1e
 //   Referenced assemblies:
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     System.Collections, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
