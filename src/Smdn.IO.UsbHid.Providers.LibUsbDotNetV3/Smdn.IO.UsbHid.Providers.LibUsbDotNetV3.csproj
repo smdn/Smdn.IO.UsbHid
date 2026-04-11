@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>preview5</VersionSuffix>
+    <_LibUsbDotNetV3PrereleaseVersionSuffix>.3-0-167</_LibUsbDotNetV3PrereleaseVersionSuffix>
+    <VersionSuffix>rc1$(_LibUsbDotNetV3PrereleaseVersionSuffix)</VersionSuffix>
     <!-- <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
     <DefineConstants>$(DefineConstants);LIBUSBDOTNET_V3</DefineConstants>
   </PropertyGroup>
