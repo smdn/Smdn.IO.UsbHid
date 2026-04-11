@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0-preview5)
+// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0-rc.1.3-0-167)
 //   Name: Smdn.IO.UsbHid.Providers.LibUsbDotNetV3
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-preview5+a1882218fe515c7debd13ad90ea10b30c9459532
+//   InformationalVersion: 1.0.0-rc.1.3-0-167+4eb6e5f6bf7911e36d39773b832a254c65b425c0
 //   TargetFramework: .NETStandard,Version=v2.1
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=a1882218fe515c7debd13ad90ea10b30c9459532
+//   Metadata: RepositoryCommit=4eb6e5f6bf7911e36d39773b832a254c65b425c0
 //   Referenced assemblies:
 //     LibUsbDotNet, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
