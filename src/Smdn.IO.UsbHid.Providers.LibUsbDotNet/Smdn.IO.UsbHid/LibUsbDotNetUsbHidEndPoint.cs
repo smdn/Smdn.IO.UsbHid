@@ -118,19 +118,16 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
 #endif
 
   /// <inheritdoc/>
-  /// <remarks>
-  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
-  /// </remarks>
   public void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
       return;
 
-    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
-
-    if (maxOutEndPointPacketSize < buffer.Length)
+    if (LengthOfReportId + maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
+
+    if (buffer[0] == 0x00) // If the report ID is 0, send only the payload
+      buffer = buffer.Slice(LengthOfReportId);
 
     ThrowIfDisposed();
 
@@ -173,14 +170,8 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
 
   /// <inheritdoc/>
   /// <remarks>
-  /// <para>
-  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
-  /// </para>
-  /// <para>
   /// This implementation performs a synchronous write, as the underlying
   /// <see cref="UsbEndpointWriter"/> does not support asynchronous operations.
-  /// </para>
   /// </remarks>
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
