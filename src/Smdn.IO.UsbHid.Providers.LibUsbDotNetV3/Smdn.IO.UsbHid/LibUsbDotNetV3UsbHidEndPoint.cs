@@ -48,6 +48,24 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
   private readonly int writeEndPointTimeoutInMilliseconds;
   private readonly int readEndPointTimeoutInMilliseconds;
 
+  /// <summary>
+  /// Gets or sets the value indicating whether the actual read length
+  /// includes the report ID length (1 byte).
+  /// </summary>
+  /// <value>
+  /// <see langword="true"/> if the report ID is determined to be included;
+  /// <see langword="false"/> if it is determined not to be included;
+  /// <see langword="null"/> if it cannot be determined either way.
+  /// </value>
+  /// <remarks>
+  /// On Windows, the actual length read and set in the `transferred` pointer
+  /// parameter of `libusb_bulk_transfer` and `libusb_interrupt_transfer`
+  /// may include the length of the report ID. If a read operation on an
+  /// endpoint determines that the read length includes the report ID,
+  /// this value is set to `true`.
+  /// </remarks>
+  private bool? AssumesActualReadLengthIncludesReportId { get; set; }
+
   internal LibUsbDotNetV3UsbHidEndPoint(
     LibUsbDotNetV3UsbHidDevice device,
     UsbEndpointWriter? endPointWriter,
@@ -67,6 +85,19 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     this.maxOutEndPointPacketSize = maxOutEndPointPacketSize;
     writeEndPointTimeoutInMilliseconds = (int)writeEndPointTimeout.TotalMilliseconds;
     this.shouldDisposeDevice = shouldDisposeDevice;
+
+    // As of now, on platforms other than Windows, it is considered that the
+    // read length does not include the report ID if the ID is 0.
+    if (!IsRunningOnWindows())
+      AssumesActualReadLengthIncludesReportId = false;
+
+    static bool IsRunningOnWindows()
+      =>
+#if SYSTEM_OPERATINGSYSTEM_ISOSPLATFORM
+        OperatingSystem.IsWindows();
+#else
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif
   }
 
   private void ThrowIfDisposed()
@@ -116,19 +147,16 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
 #endif
 
   /// <inheritdoc/>
-  /// <remarks>
-  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
-  /// </remarks>
   public void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
       return;
 
-    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
-
-    if (maxOutEndPointPacketSize < buffer.Length)
+    if (LengthOfReportId + maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
+
+    if (buffer[0] == 0x00) // If the report ID is 0, send only the payload
+      buffer = buffer.Slice(LengthOfReportId);
 
     ThrowIfDisposed();
 
@@ -171,19 +199,16 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
   }
 
   /// <inheritdoc/>
-  /// <remarks>
-  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
-  /// </remarks>
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
       return default;
 
-    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
-
-    if (maxOutEndPointPacketSize < buffer.Length)
+    if (LengthOfReportId + maxOutEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
+
+    if (buffer.Span[0] == 0x00) // If the report ID is 0, send only the payload
+      buffer = buffer.Slice(LengthOfReportId);
 
     ThrowIfDisposed();
 
@@ -232,16 +257,14 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
   /// <inheritdoc/>
   /// <remarks>
   /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
+  /// in the current implementation.
   /// </remarks>
   public int Read(Span<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
       return 0;
 
-    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
-
-    if (maxInEndPointPacketSize < buffer.Length)
+    if (LengthOfReportId + maxInEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
@@ -251,19 +274,27 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
 
     cancellationToken.ThrowIfCancellationRequested();
 
+    // TODO: The current implementation assumes that the report ID is 0
+    // and that the read data does not include the report ID.
+    buffer = buffer.Slice(LengthOfReportId);
+
     _ = ReadEndPoint.Read(
       buffer: buffer,
       timeout: readEndPointTimeoutInMilliseconds,
       out var transferLength
     );
 
-    return transferLength + LengthOfReportId;
+    return CalculateActualReadLength(
+      endPoint: this,
+      requestedReadLengthExcludeReportId: buffer.Length,
+      actualReadLength: transferLength
+    );
   }
 
   /// <inheritdoc/>
   /// <remarks>
   /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
-  /// because the underlying LibUsbDotNet API does not require it.
+  /// in the current implementation.
   /// </remarks>
   public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
   {
@@ -276,9 +307,7 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
 #endif
     }
 
-    buffer = buffer.Slice(LengthOfReportId); // get the slice of the payload only, excluding the report ID
-
-    if (maxInEndPointPacketSize < buffer.Length)
+    if (LengthOfReportId + maxInEndPointPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
@@ -289,24 +318,55 @@ public sealed class LibUsbDotNetV3UsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRe
     cancellationToken.ThrowIfCancellationRequested();
 
     return ReadAsyncCore(
-      ReadEndPoint,
-      buffer,
-      readEndPointTimeoutInMilliseconds
+      thisEndPoint: this,
+      reader: ReadEndPoint,
+      buffer: buffer,
+      timeout: readEndPointTimeoutInMilliseconds
     );
 
     static async ValueTask<int> ReadAsyncCore(
+      LibUsbDotNetV3UsbHidEndPoint thisEndPoint,
       UsbEndpointReader reader,
       Memory<byte> buffer,
       int timeout
     )
     {
+      // TODO: The current implementation assumes that the report ID is 0
+      // and that the read data does not include the report ID.
+      buffer = buffer.Slice(LengthOfReportId);
+
       var (_, transferLength) = await reader.ReadAsync(
         buffer: buffer,
         timeout: timeout
       ).ConfigureAwait(false);
 
-      return transferLength + LengthOfReportId;
+      return CalculateActualReadLength(
+        endPoint: thisEndPoint,
+        requestedReadLengthExcludeReportId: buffer.Length,
+        actualReadLength: transferLength
+      );
     }
+  }
+
+  private static int CalculateActualReadLength(
+    LibUsbDotNetV3UsbHidEndPoint endPoint,
+    int requestedReadLengthExcludeReportId,
+    int actualReadLength
+  )
+  {
+    if (!endPoint.AssumesActualReadLengthIncludesReportId.HasValue) {
+      // If the actual read length is equal to '(Report ID + requested read
+      // data length)', the report ID is considered to be included in the
+      // actual read length (e.g., if a request was made to read a 64-byte
+      // payload and the actual read length turned out to be 65 bytes).
+      if (LengthOfReportId + requestedReadLengthExcludeReportId == actualReadLength)
+        endPoint.AssumesActualReadLengthIncludesReportId = true;
+    }
+
+    if (endPoint.AssumesActualReadLengthIncludesReportId ?? false)
+      return actualReadLength;
+    else
+      return LengthOfReportId + actualReadLength;
   }
 
   public override string? ToString()
