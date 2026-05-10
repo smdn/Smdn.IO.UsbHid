@@ -6,6 +6,9 @@
 
 using System;
 using System.Buffers;
+#if !SYSTEM_OPERATINGSYSTEM_ISOSPLATFORM
+using System.Runtime.InteropServices;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
