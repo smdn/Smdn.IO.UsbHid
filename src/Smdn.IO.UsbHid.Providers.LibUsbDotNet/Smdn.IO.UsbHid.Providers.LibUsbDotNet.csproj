@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
   <Import Project="Smdn.IO.UsbHid.Providers.LibUsbDotNet-common.props" />
 
   <PropertyGroup>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
