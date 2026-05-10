@@ -1,12 +1,12 @@
-// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0-rc.1.3-0-167)
+// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0-rc.2.3-0-167)
 //   Name: Smdn.IO.UsbHid.Providers.LibUsbDotNetV3
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-rc.1.3-0-167+4eb6e5f6bf7911e36d39773b832a254c65b425c0
+//   InformationalVersion: 1.0.0-rc.2.3-0-167+a02be1536a5a6483464d66d3c646344fee434e12
 //   TargetFramework: .NETStandard,Version=v2.0
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=4eb6e5f6bf7911e36d39773b832a254c65b425c0
+//   Metadata: RepositoryCommit=a02be1536a5a6483464d66d3c646344fee434e12
 //   Referenced assemblies:
 //     LibUsbDotNet, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9
 //     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
