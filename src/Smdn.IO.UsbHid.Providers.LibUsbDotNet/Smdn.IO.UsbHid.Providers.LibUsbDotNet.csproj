@@ -21,6 +21,7 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
     <PackageReference Include="LibUsbDotNet" Version="2.2.75" />
   </ItemGroup>
 
