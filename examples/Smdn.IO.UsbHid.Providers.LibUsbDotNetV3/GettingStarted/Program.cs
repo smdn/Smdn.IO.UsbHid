@@ -6,7 +6,7 @@ using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
 
-// Register the IUsbHidService using LibUsbDotNet v3 (alpha) as the implementation provider
+// Register the IUsbHidService using LibUsbDotNet v3 as the implementation provider
 services.AddLibUsbDotNetV3UsbHid(
   configure: static (builder, options) => {
     // Specify the log level for output to stdout by libusb native library
