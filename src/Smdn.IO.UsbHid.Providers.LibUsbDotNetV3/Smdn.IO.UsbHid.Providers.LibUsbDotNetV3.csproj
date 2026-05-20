@@ -17,6 +17,9 @@ SPDX-License-Identifier: MIT
 <![CDATA[`$(AssemblyName)` is a backend provider for [Smdn.IO.UsbHid.Abstractions](https://www.nuget.org/packages/Smdn.IO.UsbHid.Abstractions)
 that utilizes the [LibUsbDotNet v3](https://github.com/LibUsbDotNet/LibUsbDotNet) library for hardware communication.
 It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `LibUsbDotNet` implementation.
+
+To use this library, the native library `libusb-1.0` is required. Neither this package nor [LibUsbDotNet](https://www.nuget.org/packages/LibUsbDotNet) includes `libusb-1.0`.
+Therefore, please install `libusb-1.0` on your system or place it in the output directory of the executable file.
 ]]>
     </Description>
   </PropertyGroup>

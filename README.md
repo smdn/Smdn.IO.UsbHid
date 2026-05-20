@@ -29,6 +29,8 @@ A backend provider for `Smdn.IO.UsbHid.*` that utilizes the [LibUsbDotNet](https
 
 It offers specific configuration through `LibUsbDotNetOptions`, allowing users to define timeouts and buffer sizes for HID report transfers. The library maps `IUsbHidDevice` to `UsbDevice` and handles HID reports using LibUsbDotNet's endpoint reader and writer classes. Similar to other providers, it supports DI-based service registration and the configuration of [Polly](https://github.com/App-vNext/Polly) resilience pipelines for device access.
 
+The [LibUsbDotNet NuGet package](https://www.nuget.org/packages/LibUsbDotNet) does not include the native library `libusb-1.0`. To use this backend provider, you need to either install it on your system or manually copy it to the output directory of the executable. For more details, please refer to the [LibUsbDotNet documentation](https://github.com/LibUsbDotNet/LibUsbDotNet/wiki#how-to-use-libusbdotnet).
+
 
 
 # Smdn.IO.UsbHid.Providers.LibUsbDotNetV3
