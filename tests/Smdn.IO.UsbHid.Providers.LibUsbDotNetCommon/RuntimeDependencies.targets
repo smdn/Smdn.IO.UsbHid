@@ -82,10 +82,15 @@ SPDX-License-Identifier: MIT
   </Target>
 
   <Target
-    Name="IncludeLibUsbDllInOutput"
+    Name="IncludeLibUsbDllInOutputWindows"
     BeforeTargets="GetCopyToOutputDirectoryItems"
     DependsOnTargets="InstallCIRuntimeDependencies"
-    Condition="'$(GITHUB_ACTIONS)' == 'true'"
+    Condition="
+      '$(GITHUB_ACTIONS)' == 'true' and
+      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        $([System.Runtime.InteropServices.OSPlatform]::Windows)
+      ))
+    "
   >
     <ItemGroup>
       <Content Include="$(_LibUsbDllFileFullPath)" Condition="Exists('$(_LibUsbDllFileFullPath)')">
@@ -98,4 +103,24 @@ SPDX-License-Identifier: MIT
       </ContentWithTargetPath>
     </ItemGroup>
   </Target>
+
+  <Target
+    Name="IncludeLibUsbDylibInOutputMacOs"
+    BeforeTargets="GetCopyToOutputDirectoryItems"
+    DependsOnTargets="InstallCIRuntimeDependencies"
+    Condition="
+      '$(GITHUB_ACTIONS)' == 'true' and
+      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        $([System.Runtime.InteropServices.OSPlatform]::OSX)
+      ))
+    "
+  >
+    <PropertyGroup>
+      <LibUsbDylibPath>/opt/homebrew/lib/libusb-1.0.dylib</LibUsbDylibPath>
+      <LibUsbDylibPath Condition="!Exists('$(LibUsbDylibPath)')">/usr/local/lib/libusb-1.0.dylib</LibUsbDylibPath>
+    </PropertyGroup>
+
+    <Exec Command="ln -sf $(LibUsbDylibPath) $(OutputPath)libusb-1.0.dylib" />
+  </Target>
+
 </Project>
