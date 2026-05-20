@@ -1,15 +1,15 @@
-// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0-rc.2.3-0-167)
+// Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.dll (Smdn.IO.UsbHid.Providers.LibUsbDotNetV3-1.0.0)
 //   Name: Smdn.IO.UsbHid.Providers.LibUsbDotNetV3
 //   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0-rc.2.3-0-167+a02be1536a5a6483464d66d3c646344fee434e12
+//   InformationalVersion: 1.0.0+e14040eb8551c7b82251129893d06a45d4b7ba9c
 //   TargetFramework: .NETFramework,Version=v4.6.2
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.IO.UsbHid
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=a02be1536a5a6483464d66d3c646344fee434e12
+//   Metadata: RepositoryCommit=e14040eb8551c7b82251129893d06a45d4b7ba9c
 //   Referenced assemblies:
 //     LibUsbDotNet, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9
-//     Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Microsoft.Extensions.Options, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
@@ -18,12 +18,12 @@
 //     Smdn.Extensions.Polly.KeyedRegistry, Version=1.2.0.0, Culture=neutral
 //     Smdn.IO.UsbHid.Abstractions, Version=1.0.0.0, Culture=neutral
 //     System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-//     System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-//     System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     System.Runtime.InteropServices.RuntimeInformation, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-//     System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
-//     System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.ValueTuple, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
 #nullable enable annotations
 
