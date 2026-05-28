@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
     <PackageProjectUrl>https://github.com/smdn/Smdn.IO.UsbHid</PackageProjectUrl>
   </PropertyGroup>
 
-  <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
+  <PropertyGroup Label="repository properties">
     <RepositoryUrl>https://github.com/smdn/Smdn.IO.UsbHid</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
