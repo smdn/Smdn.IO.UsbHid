@@ -48,7 +48,7 @@ internal sealed partial class LibUsbDefaultSession(IServiceProvider? serviceProv
             return handleOfLibUsb;
         }
 
-        return IntPtr.Zero;
+        return default;
       };
     }
 
