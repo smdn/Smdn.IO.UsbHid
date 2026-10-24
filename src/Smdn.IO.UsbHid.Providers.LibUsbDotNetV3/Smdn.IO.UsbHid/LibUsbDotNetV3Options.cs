@@ -14,10 +14,8 @@ public sealed class LibUsbDotNetV3Options {
   [CLSCompliant(false)]
   public LogLevel DebugLevel { get; set; }
 
-#pragma warning disable IDE0360 // Property accessor can be simplified
-#pragma warning disable SA1513 // Closing brace should be followed by blank line
   public TimeSpan ReadEndPointTimeout {
-    get => field;
+    get;
     set =>
       field = TimeSpan.Zero <= value
         ? value
@@ -29,7 +27,7 @@ public sealed class LibUsbDotNetV3Options {
   } = TimeSpan.FromSeconds(10);
 
   public TimeSpan WriteEndPointTimeout {
-    get => field;
+    get;
     set =>
       field = TimeSpan.Zero <= value
         ? value
@@ -39,8 +37,6 @@ public sealed class LibUsbDotNetV3Options {
             message: "must be zero or positive value"
           );
   } = TimeSpan.FromSeconds(10);
-#pragma warning restore SA1513
-#pragma warning restore IDE0360
 
   internal LibUsbDotNet.LogLevel LibUsbDotNetDebugLevel => DebugLevel switch {
     LogLevel.Trace or LogLevel.Debug => LibUsbDotNet.LogLevel.Debug,
