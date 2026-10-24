@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#pragma warning disable SA1008, SA1110, SA1114
+#pragma warning disable SA1008, SA1110
 
 #if LIBUSBDOTNET_V3
 #pragma warning disable SA1649 // warning SA1649: File name should match first type name

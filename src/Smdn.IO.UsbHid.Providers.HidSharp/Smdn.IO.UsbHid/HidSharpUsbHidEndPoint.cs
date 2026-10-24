@@ -230,13 +230,11 @@ public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStrea
 
     try {
       return
-#pragma warning disable SA1114
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
         ValueTask.FromResult<int>(
 #else
         new(
 #endif
-#pragma warning restore SA1114
           result: EndPointStream.Read(buf.Array ?? throw new InvalidOperationException("destination array is null"), buf.Offset, buf.Count)
         );
     }

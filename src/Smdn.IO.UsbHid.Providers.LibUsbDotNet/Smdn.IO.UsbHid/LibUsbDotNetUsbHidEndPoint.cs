@@ -288,13 +288,11 @@ public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointRead
   /// </para>
   /// </remarks>
   public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
-#pragma warning disable SA1114
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
-    => ValueTask.FromResult<int>(
+    => ValueTask.FromResult(
 #else
     => new(
 #endif
-#pragma warning disable CA2000
       result: Read(buffer.Span, cancellationToken)
     );
 

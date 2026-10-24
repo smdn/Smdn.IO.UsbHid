@@ -403,22 +403,18 @@ public sealed partial class LibUsbDotNetV3UsbHidDevice : IUsbHidDevice<UsbDevice
       try {
         return await resiliencePipelineOpenEndPoint.ExecuteAsync(
           callback: ctx =>
-#pragma warning disable SA1114
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
             ValueTask.FromResult<IUsbHidEndPoint>(
 #else
             new ValueTask<IUsbHidEndPoint>(
 #endif
-#pragma warning disable CA2000
               result: OpenEndPointCore(
                 openOutEndPoint: openOutEndPoint,
                 openInEndPoint: openInEndPoint,
                 shouldDisposeDevice: shouldDisposeDevice,
                 cancellationToken: cancellationToken
               )
-#pragma warning restore CA2000
             ),
-#pragma warning restore SA1114
           context: resilienceContext
         ).ConfigureAwait(false);
       }
