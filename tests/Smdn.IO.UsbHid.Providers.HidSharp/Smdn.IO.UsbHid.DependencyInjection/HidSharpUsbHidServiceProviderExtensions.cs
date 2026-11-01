@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-using Polly.Retry;
 using Polly.Registry;
+using Polly.Retry;
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 

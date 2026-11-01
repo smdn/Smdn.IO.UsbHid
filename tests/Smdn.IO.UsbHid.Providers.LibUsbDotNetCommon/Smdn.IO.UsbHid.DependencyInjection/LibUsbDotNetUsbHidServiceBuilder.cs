@@ -25,7 +25,7 @@ public class LibUsbDotNetUsbHidServiceBuilderTests {
         typeof(LibUsbDotNetUsbHidDevice).FullName;
 #endif
 
-      CreateCalled |= (categoryName == expectedCallerCategoryName);
+      CreateCalled |= categoryName == expectedCallerCategoryName;
       return NullLogger.Instance;
     }
     public void Dispose() { }

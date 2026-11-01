@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-using System.Runtime.CompilerServices;
+
 using Microsoft.Extensions.Logging;
 
 using NUnit.Framework;

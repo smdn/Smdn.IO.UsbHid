@@ -25,11 +25,11 @@ public class IUsbHidServiceTests {
     using var usbHidService = provider.GetRequiredService<IUsbHidService>();
 
     Assert.That(
-      () => usbHidService.Dispose(),
+      usbHidService.Dispose,
       Throws.Nothing
     );
     Assert.That(
-      () => usbHidService.Dispose(),
+      usbHidService.Dispose,
       Throws.Nothing,
       "dispose again"
     );
@@ -66,7 +66,7 @@ public class IUsbHidServiceTests {
       "dispose again"
     );
     Assert.That(
-      () => usbHidService.Dispose(),
+      usbHidService.Dispose,
       Throws.Nothing,
       "dispose sync"
     );
