@@ -21,8 +21,7 @@ public class LibUsbDotNetOptionsTests {
       () => new LibUsbDotNetOptions() { ReadEndPointBufferSize = value },
       Throws
         .TypeOf<ArgumentOutOfRangeException>()
-        .With
-        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .ParamName
         .EqualTo(nameof(LibUsbDotNetOptions.ReadEndPointBufferSize))
     );
 
@@ -48,8 +47,7 @@ public class LibUsbDotNetOptionsTests {
       () => new LibUsbDotNetOptions() { ReadEndPointTimeout = TimeSpan.FromSeconds(timeout) },
       Throws
         .TypeOf<ArgumentOutOfRangeException>()
-        .With
-        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .ParamName
         .EqualTo(nameof(LibUsbDotNetOptions.ReadEndPointTimeout))
     );
 
@@ -75,8 +73,7 @@ public class LibUsbDotNetOptionsTests {
       () => new LibUsbDotNetOptions() { WriteEndPointTimeout = TimeSpan.FromSeconds(timeout) },
       Throws
         .TypeOf<ArgumentOutOfRangeException>()
-        .With
-        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .ParamName
         .EqualTo(nameof(LibUsbDotNetOptions.WriteEndPointTimeout))
     );
 

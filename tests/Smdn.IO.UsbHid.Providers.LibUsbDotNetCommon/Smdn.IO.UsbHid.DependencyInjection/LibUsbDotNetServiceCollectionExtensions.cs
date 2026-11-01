@@ -23,7 +23,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         (),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!
@@ -33,7 +33,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ((builder, options) => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!
@@ -43,7 +43,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ("key"),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!
@@ -53,7 +53,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ("key", (builder, options) => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!
@@ -63,7 +63,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         <string>("key", static key => key),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!
@@ -73,7 +73,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         <string>("key", static key => key, (builder, options) => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
   }
 
@@ -90,7 +90,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         (configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
     Assert.That(
       () => services
@@ -100,7 +100,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ("key", configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
     Assert.That(
       () => services
@@ -110,7 +110,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         <string>("key", static key => key, configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
   }
 
@@ -127,7 +127,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ("key", selectOptionsNameForServiceKey: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
+      Throws.ArgumentNullException.ParamName.EqualTo("selectOptionsNameForServiceKey")
     );
     Assert.That(
       () => services
@@ -137,7 +137,7 @@ public class LibUsbDotNetServiceCollectionExtensionsTests {
         .AddLibUsbDotNetUsbHid
 #endif
         ("key", selectOptionsNameForServiceKey: null!, (builder, options) => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
+      Throws.ArgumentNullException.ParamName.EqualTo("selectOptionsNameForServiceKey")
     );
   }
 

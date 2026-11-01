@@ -27,11 +27,11 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
 
     Assert.That(
       () => nullBuilder.AddResiliencePipelineForOpenEndPoint(retryOptions: new RetryStrategyOptions()),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("builder")
+      Throws.ArgumentNullException.ParamName.EqualTo("builder")
     );
     Assert.That(
       () => nullBuilder.AddResiliencePipelineForOpenEndPoint(configure: (builder, context) => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("builder")
+      Throws.ArgumentNullException.ParamName.EqualTo("builder")
     );
   }
 
@@ -61,7 +61,7 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
 
     Assert.That(
       () => builder.AddResiliencePipelineForOpenEndPoint(retryOptions: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("retryOptions")
+      Throws.ArgumentNullException.ParamName.EqualTo("retryOptions")
     );
   }
 
@@ -91,7 +91,7 @@ public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
 
     Assert.That(
       () => builder.AddResiliencePipelineForOpenEndPoint(configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
   }
 

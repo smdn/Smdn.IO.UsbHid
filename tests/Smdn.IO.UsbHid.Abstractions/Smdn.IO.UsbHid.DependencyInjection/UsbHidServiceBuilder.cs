@@ -33,8 +33,7 @@ public class UsbHidServiceBuilderTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("services")
     );
 

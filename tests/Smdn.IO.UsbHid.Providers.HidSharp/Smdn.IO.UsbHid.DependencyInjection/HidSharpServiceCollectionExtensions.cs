@@ -15,27 +15,27 @@ public class HidSharpServiceCollectionExtensionsTests {
   {
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid(),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid(builder => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid("key"),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid("key", builder => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid<string>("key", static key => key),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
     Assert.That(
       () => (null as IServiceCollection)!.AddHidSharpUsbHid<string>("key", static key => key, builder => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("services")
+      Throws.ArgumentNullException.ParamName.EqualTo("services")
     );
   }
 
@@ -46,15 +46,15 @@ public class HidSharpServiceCollectionExtensionsTests {
 
     Assert.That(
       () => services.AddHidSharpUsbHid(configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
     Assert.That(
       () => services.AddHidSharpUsbHid("key", configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
     Assert.That(
       () => services.AddHidSharpUsbHid<string>("key", static key => key, configure: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("configure")
+      Throws.ArgumentNullException.ParamName.EqualTo("configure")
     );
   }
 
@@ -65,11 +65,11 @@ public class HidSharpServiceCollectionExtensionsTests {
 
     Assert.That(
       () => services.AddHidSharpUsbHid("key", selectOptionsNameForServiceKey: null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
+      Throws.ArgumentNullException.ParamName.EqualTo("selectOptionsNameForServiceKey")
     );
     Assert.That(
       () => services.AddHidSharpUsbHid("key", selectOptionsNameForServiceKey: null!, builder => { }),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("selectOptionsNameForServiceKey")
+      Throws.ArgumentNullException.ParamName.EqualTo("selectOptionsNameForServiceKey")
     );
   }
 

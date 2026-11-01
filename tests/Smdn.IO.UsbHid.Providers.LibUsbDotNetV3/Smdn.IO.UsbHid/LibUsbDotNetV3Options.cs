@@ -18,8 +18,7 @@ public class LibUsbDotNetV3OptionsTests {
       () => new LibUsbDotNetV3Options() { ReadEndPointTimeout = TimeSpan.FromSeconds(timeout) },
       Throws
         .TypeOf<ArgumentOutOfRangeException>()
-        .With
-        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .ParamName
         .EqualTo(nameof(LibUsbDotNetV3Options.ReadEndPointTimeout))
     );
 
@@ -45,8 +44,7 @@ public class LibUsbDotNetV3OptionsTests {
       () => new LibUsbDotNetV3Options() { WriteEndPointTimeout = TimeSpan.FromSeconds(timeout) },
       Throws
         .TypeOf<ArgumentOutOfRangeException>()
-        .With
-        .Property(nameof(ArgumentOutOfRangeException.ParamName))
+        .ParamName
         .EqualTo(nameof(LibUsbDotNetV3Options.WriteEndPointTimeout))
     );
 

@@ -232,8 +232,7 @@ public class IUsbHidDeviceExtensionsTests {
       () => device.ToIdentificationString(),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("device")
     );
   }

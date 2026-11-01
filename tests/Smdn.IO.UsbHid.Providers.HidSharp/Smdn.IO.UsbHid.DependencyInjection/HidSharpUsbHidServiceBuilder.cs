@@ -51,7 +51,7 @@ public class HidSharpUsbHidServiceBuilderTests {
 
     Assert.That(
       () => builder.Build(null!),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("serviceProvider")
+      Throws.ArgumentNullException.ParamName.EqualTo("serviceProvider")
     );
   }
 

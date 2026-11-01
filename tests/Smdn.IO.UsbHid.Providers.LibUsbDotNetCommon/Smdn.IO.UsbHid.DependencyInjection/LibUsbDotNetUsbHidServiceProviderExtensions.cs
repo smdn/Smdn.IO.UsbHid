@@ -23,7 +23,7 @@ public class LibUsbDotNetUsbHidServiceProviderExtensionsTests {
         .GetResiliencePipelineProviderForLibUsbDotNetUsbHidService
 #endif
         ("service-key"),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("serviceProvider")
+      Throws.ArgumentNullException.ParamName.EqualTo("serviceProvider")
     );
 
   [Test]

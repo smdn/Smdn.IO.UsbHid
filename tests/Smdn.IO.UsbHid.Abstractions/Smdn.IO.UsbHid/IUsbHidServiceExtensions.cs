@@ -99,8 +99,7 @@ public class IUsbHidServiceExtensionsTests {
       () => usbHidService!.GetDevices(vendorId: null, productId: null, cancellationToken: default),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("usbHidService")
     );
   }
@@ -237,8 +236,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("usbHidService")
     );
   }
@@ -379,8 +377,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("usbHidService")
     );
   }
@@ -399,8 +396,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("predicate")
     );
   }
@@ -540,8 +536,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("usbHidService")
     );
   }
@@ -679,8 +674,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("usbHidService")
     );
   }
@@ -699,8 +693,7 @@ public class IUsbHidServiceExtensionsTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("predicate")
     );
   }

@@ -17,7 +17,7 @@ public class HidSharpUsbHidServiceProviderExtensionsTests {
   public void GetResiliencePipelineProviderForHidSharpUsbHidService_ServiceProviderNull()
     => Assert.That(
       () => (null as IServiceProvider)!.GetResiliencePipelineProviderForHidSharpUsbHidService("service-key"),
-      Throws.ArgumentNullException.With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("serviceProvider")
+      Throws.ArgumentNullException.ParamName.EqualTo("serviceProvider")
     );
 
   [Test]
