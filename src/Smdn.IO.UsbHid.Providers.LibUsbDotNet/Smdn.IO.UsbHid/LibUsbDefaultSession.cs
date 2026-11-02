@@ -1,6 +1,5 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#pragma warning disable CA1812
 
 #if LIBUSBDOTNET_V3
 #error This file was written for LibUsbDotNet v2. It cannot be built for v3.
@@ -21,7 +20,12 @@ using MonoLibUsb;
 
 namespace Smdn.IO.UsbHid;
 
+// Since LibUsbDefaultSession is never instantiated directly, warning CA1812 is generated;
+// however, because it may be added to the IServiceCollection as the default implementation
+// via TryAddSingleton<ILibUsbSession, LibUsbDefaultSession>(), suppress this warning.
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 internal sealed partial class LibUsbDefaultSession(IServiceProvider? serviceProvider) : ILibUsbSession {
+#pragma warning restore CA1812
   private readonly ILogger logger =
     (ILogger?)serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<LibUsbDefaultSession>() ??
     NullLogger.Instance;
