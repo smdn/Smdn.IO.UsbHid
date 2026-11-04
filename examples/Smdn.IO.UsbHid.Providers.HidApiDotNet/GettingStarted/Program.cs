@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 using Smdn.IO.UsbHid;
 using Smdn.IO.UsbHid.DependencyInjection;

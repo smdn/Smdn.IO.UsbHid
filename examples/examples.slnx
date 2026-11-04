@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
   <Folder Name="/Smdn.IO.UsbHid.Providers.HidApiDotNet/GettingStarted/">
     <Project Path="Smdn.IO.UsbHid.Providers.HidApiDotNet/GettingStarted/Program.csproj" />
   </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.HidApiDotNet/ResiliencePipelines/">
+    <Project Path="Smdn.IO.UsbHid.Providers.HidApiDotNet/ResiliencePipelines/Program.csproj" />
+  </Folder>
+  <Folder Name="/Smdn.IO.UsbHid.Providers.HidApiDotNet/UnderlyingImplementation/">
+    <Project Path="Smdn.IO.UsbHid.Providers.HidApiDotNet/UnderlyingImplementation/Program.csproj" />
+  </Folder>
   <Folder Name="/Smdn.IO.UsbHid.Providers.HidSharp/GettingStarted/">
     <Project Path="Smdn.IO.UsbHid.Providers.HidSharp/GettingStarted/Program.csproj" />
   </Folder>
