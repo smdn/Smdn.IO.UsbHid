@@ -9,6 +9,8 @@ using Polly.Retry;
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
+// Common test cases are defined in `CommonUsbHidServiceBuilderTests`.
+// Provider-specific test cases should be defined in this class.
 [TestFixture]
 public class HidSharpUsbHidServiceBuilderExtensionsTests {
   [Test]
@@ -16,6 +18,10 @@ public class HidSharpUsbHidServiceBuilderExtensionsTests {
   {
     HidSharpUsbHidServiceBuilder<string> nullBuilder = null!;
 
+    Assert.That(
+      () => nullBuilder.AddResiliencePipelineForOpenEndPoint(),
+      Throws.ArgumentNullException.ParamName.EqualTo("builder")
+    );
     Assert.That(
       () => nullBuilder.AddResiliencePipelineForOpenEndPoint(retryOptions: new RetryStrategyOptions()),
       Throws.ArgumentNullException.ParamName.EqualTo("builder")
@@ -71,6 +77,30 @@ public class HidSharpUsbHidServiceBuilderExtensionsTests {
           new RetryStrategyOptions()
         );
       }
+    );
+
+    var provider = services.BuildServiceProvider();
+    var pipelineProvider = provider.GetRequiredKeyedService<ResiliencePipelineProvider<string>>(ServiceKey);
+
+    Assert.That(
+      pipelineProvider.TryGetPipeline(
+        HidSharpUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+        out var pipeline
+      ),
+      Is.True
+    );
+    Assert.That(pipeline, Is.Not.Null);
+  }
+
+  [Test]
+  public void AddResiliencePipelineForOpenEndPoint_WithDefaultOption()
+  {
+    const string ServiceKey = nameof(ServiceKey);
+    var services = new ServiceCollection();
+
+    services.AddHidSharpUsbHid(
+      ServiceKey,
+      builder => builder.AddResiliencePipelineForOpenEndPoint()
     );
 
     var provider = services.BuildServiceProvider();

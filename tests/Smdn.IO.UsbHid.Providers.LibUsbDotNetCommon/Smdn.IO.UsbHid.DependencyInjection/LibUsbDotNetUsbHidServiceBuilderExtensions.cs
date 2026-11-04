@@ -1,18 +1,16 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-using System;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-using Polly;
-using Polly.DependencyInjection;
 using Polly.Registry;
 using Polly.Retry;
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
+// Common test cases are defined in `CommonUsbHidServiceBuilderTests`.
+// Provider-specific test cases should be defined in this class.
 [TestFixture]
 public class LibUsbDotNetUsbHidServiceBuilderExtensionsTests {
   [Test]

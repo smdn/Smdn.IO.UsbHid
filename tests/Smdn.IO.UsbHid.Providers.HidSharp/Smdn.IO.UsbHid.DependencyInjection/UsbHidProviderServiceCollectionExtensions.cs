@@ -1,12 +1,71 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+using System;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Smdn.IO.UsbHid.DependencyInjection;
 
-internal static class UsbHidProviderServiceCollectionExtensions {
-  public static IServiceCollection AddUsbHidProvider(
+// The methods in this class implement the partial methods defined in
+// `Smdn.IO.UsbHid.Providers.Common`. Specifically, they add `HidSharpUsbHidService`
+// as an implementation of `IUsbHidService`, which is used in common test code.
+internal static partial class UsbHidProviderServiceCollectionExtensions {
+  public static partial IServiceCollection AddUsbHidProvider(
     this IServiceCollection services
   )
     => services.AddHidSharpUsbHid();
+
+  public static partial IServiceCollection AddUsbHidProvider(
+    this IServiceCollection services,
+    string serviceKey
+  )
+    => services.AddHidSharpUsbHid(
+      serviceKey: serviceKey
+    );
+
+  public static partial IServiceCollection AddUsbHidProvider<TServiceKey>(
+    this IServiceCollection services,
+    TServiceKey serviceKey,
+    Func<TServiceKey, string?> selectOptionsNameForServiceKey
+  )
+    => services.AddHidSharpUsbHid(
+      serviceKey: serviceKey,
+      selectOptionsNameForServiceKey: selectOptionsNameForServiceKey
+    );
+
+  public static partial IServiceCollection AddUsbHidProvider(
+    this IServiceCollection services,
+    Action<UsbHidServiceBuilder<object?>> configure
+  )
+    => services.AddHidSharpUsbHid(
+      configure: configure is null
+        ? null!
+        : builder => configure(builder)
+    );
+
+  public static partial IServiceCollection AddUsbHidProvider(
+    this IServiceCollection services,
+    string serviceKey,
+    Action<UsbHidServiceBuilder<string>> configure
+  )
+    => services.AddHidSharpUsbHid(
+      serviceKey: serviceKey,
+      configure: configure is null
+        ? null!
+        : builder => configure(builder)
+    );
+
+  public static partial IServiceCollection AddUsbHidProvider<TServiceKey>(
+    this IServiceCollection services,
+    TServiceKey serviceKey,
+    Func<TServiceKey, string?> selectOptionsNameForServiceKey,
+    Action<UsbHidServiceBuilder<TServiceKey>> configure
+  )
+    => services.AddHidSharpUsbHid(
+      serviceKey: serviceKey,
+      selectOptionsNameForServiceKey: selectOptionsNameForServiceKey,
+      configure: configure is null
+        ? null!
+        : builder => configure(builder)
+    );
 }
