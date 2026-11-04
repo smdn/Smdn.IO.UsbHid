@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Smdn.IO.UsbHid.Abstractions/Smdn.IO.UsbHid.Abstractions.Tests.csproj" />
+    <Project Path="tests/Smdn.IO.UsbHid.Providers.HidApiDotNet/Smdn.IO.UsbHid.Providers.HidApiDotNet.Tests.csproj" />
     <Project Path="tests/Smdn.IO.UsbHid.Providers.HidSharp/Smdn.IO.UsbHid.Providers.HidSharp.Tests.csproj" />
     <Project Path="tests/Smdn.IO.UsbHid.Providers.LibUsbDotNet/Smdn.IO.UsbHid.Providers.LibUsbDotNet.Tests.csproj" />
     <Project Path="tests/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.Tests.csproj" />

@@ -1,0 +1,86 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Target
+    Name="InstallCIRuntimeDependencies"
+    BeforeTargets="DispatchToInnerBuilds;BeforeBuild"
+    Condition="'$(GITHUB_ACTIONS)' == 'true' and ('$(IsCrossTargetingBuild)' == 'true' or '$(TargetFrameworks)' == '')"
+  >
+    <Exec
+      Command="sudo apt-get update &amp;&amp; sudo apt-get install -y libhidapi-hidraw0"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::Linux)
+        ))
+      "
+    />
+
+    <Exec
+      Command="brew install hidapi"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::OSX)
+        ))
+      "
+    />
+
+    <Exec
+      Command="vcpkg install hidapi:x64-windows"
+      Condition="
+        $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+          $([System.Runtime.InteropServices.OSPlatform]::Windows)
+        ))
+      "
+    />
+  </Target>
+
+  <Target
+    Name="IncludeLibHidApiDylibInOutputMacOs"
+    BeforeTargets="GetCopyToOutputDirectoryItems"
+    DependsOnTargets="InstallCIRuntimeDependencies"
+    Condition="
+      '$(GITHUB_ACTIONS)' == 'true' and
+      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        $([System.Runtime.InteropServices.OSPlatform]::OSX)
+      ))
+    "
+  >
+    <PropertyGroup>
+      <LibHidApiDylibPath>/opt/homebrew/lib/libhidapi.dylib</LibHidApiDylibPath>
+      <LibHidApiDylibPath Condition="!Exists('$(LibHidApiDylibPath)')">/usr/local/lib/libhidapi.dylib</LibHidApiDylibPath>
+    </PropertyGroup>
+
+    <Exec Command="ln -sf $(LibHidApiDylibPath) $(OutputPath)libhidapi.dylib" />
+  </Target>
+
+  <Target
+    Name="IncludeHidApiDllInOutputWindows"
+    BeforeTargets="GetCopyToOutputDirectoryItems"
+    DependsOnTargets="InstallCIRuntimeDependencies"
+    Condition="
+      '$(GITHUB_ACTIONS)' == 'true' and
+      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        $([System.Runtime.InteropServices.OSPlatform]::Windows)
+      ))
+    "
+  >
+    <PropertyGroup>
+      <_HidApiDllPath_Candidate1>$(VCPKG_INSTALLATION_ROOT)\installed\x64-windows\bin\hidapi.dll</_HidApiDllPath_Candidate1>
+      <_HidApiDllPath_Candidate2>C:\vcpkg\installed\x64-windows\bin\hidapi.dll</_HidApiDllPath_Candidate2>
+      <_HidApiDllPath_Candidate3>$(MSBuildThisFileDirectory)vcpkg_installed\x64-windows\bin\hidapi.dll</_HidApiDllPath_Candidate3>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <HidApiDllPath Condition="'$(HidApiDllPath)' == '' and Exists('$(_HidApiDllPath_Candidate1)')">$(_HidApiDllPath_Candidate1)</HidApiDllPath>
+      <HidApiDllPath Condition="'$(HidApiDllPath)' == '' and Exists('$(_HidApiDllPath_Candidate2)')">$(_HidApiDllPath_Candidate2)</HidApiDllPath>
+      <HidApiDllPath Condition="'$(HidApiDllPath)' == '' and Exists('$(_HidApiDllPath_Candidate3)')">$(_HidApiDllPath_Candidate3)</HidApiDllPath>
+    </PropertyGroup>
+
+    <Message Text="Found hidapi.dll at '$(HidApiDllPath)'" Importance="high" Condition="'$(HidApiDllPath)' != ''" />
+    <Message Text="hidapi.dll could not be found in supplied path or any of standard vcpkg paths." Importance="high" Condition="'$(HidApiDllPath)' == ''" />
+
+    <Copy SourceFiles="$(HidApiDllPath)" DestinationFolder="$(OutputPath)" Condition="Exists('$(HidApiDllPath)')" />
+  </Target>
+</Project>
