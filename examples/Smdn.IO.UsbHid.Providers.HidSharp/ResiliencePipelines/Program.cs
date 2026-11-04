@@ -3,8 +3,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Polly.Telemetry;
-
 using Smdn.IO.UsbHid;
 using Smdn.IO.UsbHid.DependencyInjection;
 
@@ -31,7 +29,7 @@ services
       .AddFilter("Polly", LogLevel.Warning)
   );
 
-var usbHidService =  services.BuildServiceProvider().GetRequiredService<IUsbHidService>();
+var usbHidService = services.BuildServiceProvider().GetRequiredService<IUsbHidService>();
 
 foreach (var device in usbHidService.GetDevices()) {
   Console.WriteLine($"{device.VendorId:X4}:{device.ProductId:X4}");

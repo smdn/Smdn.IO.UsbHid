@@ -1,7 +1,5 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-using System.Linq;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.IO.UsbHid;
