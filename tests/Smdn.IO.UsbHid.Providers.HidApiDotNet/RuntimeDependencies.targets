@@ -57,7 +57,7 @@ SPDX-License-Identifier: MIT
 
   <Target
     Name="IncludeHidApiDllInOutputWindows"
-    BeforeTargets="GetCopyToOutputDirectoryItems"
+    BeforeTargets="CopyFilesToOutputDirectory"
     DependsOnTargets="InstallCIRuntimeDependencies"
     Condition="
       '$(GITHUB_ACTIONS)' == 'true' and

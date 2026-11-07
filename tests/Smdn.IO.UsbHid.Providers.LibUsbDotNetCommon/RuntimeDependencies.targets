@@ -33,46 +33,8 @@ SPDX-License-Identifier: MIT
       "
     />
 
-    <PropertyGroup>
-      <_LibUsbDeployScript><![CDATA[
-        $libusb_basedir = '$(_LibUsbBaseDirectory)';
-        $libusb7z_outfile = '$(_LibUsbBaseDirectory)libusb.7z';
-        $libusb_extractdir = '$(_LibUsbExtractDirectory)';
-        $libusbdll_deploy_path = '$(_LibUsbDllFileFullPath)';
-
-        if ($libusb_basedir -and !(Test-Path $libusb_basedir)) {
-          $null = New-Item -Path $libusb_basedir -ItemType Directory -Force;
-        }
-
-        if (!(Test-Path $libusb7z_outfile)) {
-          Write-Host 'Downloading libusb v$(_LibUsbVersion)...';
-          Invoke-WebRequest -Uri 'https://github.com/libusb/libusb/releases/download/v$(_LibUsbVersion)/libusb-$(_LibUsbVersion).7z' -OutFile $libusb7z_outfile;
-        }
-
-        if (!(Test-Path $libusb_extractdir)) {
-          if (!(Get-Command 7z -ErrorAction SilentlyContinue)) {
-            $env:PATH = $env:ProgramFiles + '\7-Zip;' + $env:PATH;
-          }
-
-          $7z_outdir_option = '-O' + $libusb_extractdir;
-          Write-Host "Extracting $libusb7z_outfile to $libusb_extractdir...";
-          & 7z x $libusb7z_outfile $7z_outdir_option -y -bso0 -bsp0;
-        }
-
-        $libusbdll_deploy_dir = Split-Path -Path $libusbdll_deploy_path -Parent;
-
-        if ($libusbdll_deploy_dir -and !(Test-Path $libusbdll_deploy_dir)) {
-          $null = New-Item -Path $libusbdll_deploy_dir -ItemType Directory -Force;
-        }
-
-        Copy-Item "$libusb_extractdir\MinGW64\dll\libusb-1.0.dll" -Destination $libusbdll_deploy_path -Force;
-
-        Unblock-File -Path $libusbdll_deploy_path;
-      ]]></_LibUsbDeployScript>
-    </PropertyGroup>
-
     <Exec
-      Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$(_LibUsbDeployScript.Replace('%0A', ' ').Replace('%0D', ' ').Replace('%09', ' ').Trim())&quot;"
+      Command="vcpkg install libusb:x64-windows"
       Condition="
         $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
           $([System.Runtime.InteropServices.OSPlatform]::Windows)
@@ -83,7 +45,7 @@ SPDX-License-Identifier: MIT
 
   <Target
     Name="IncludeLibUsbDllInOutputWindows"
-    BeforeTargets="GetCopyToOutputDirectoryItems"
+    BeforeTargets="CopyFilesToOutputDirectory"
     DependsOnTargets="InstallCIRuntimeDependencies"
     Condition="
       '$(GITHUB_ACTIONS)' == 'true' and
@@ -92,16 +54,22 @@ SPDX-License-Identifier: MIT
       ))
     "
   >
-    <ItemGroup>
-      <Content Include="$(_LibUsbDllFileFullPath)" Condition="Exists('$(_LibUsbDllFileFullPath)')">
-        <Link>libusb-1.0.dll</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <ContentWithTargetPath Include="$(_LibUsbDllFileFullPath)" Condition="Exists('$(_LibUsbDllFileFullPath)')">
-        <TargetPath>libusb-1.0.dll</TargetPath>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </ContentWithTargetPath>
-    </ItemGroup>
+    <PropertyGroup>
+      <_LibUsbDllPath_Candidate1>$(VCPKG_INSTALLATION_ROOT)\installed\x64-windows\bin\libusb-1.0.dll</_LibUsbDllPath_Candidate1>
+      <_LibUsbDllPath_Candidate2>C:\vcpkg\installed\x64-windows\bin\libusb-1.0.dll</_LibUsbDllPath_Candidate2>
+      <_LibUsbDllPath_Candidate3>$(MSBuildThisFileDirectory)vcpkg_installed\x64-windows\bin\libusb-1.0.dll</_LibUsbDllPath_Candidate3>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <LibUsbDllPath Condition="'$(LibUsbDllPath)' == '' and Exists('$(_LibUsbDllPath_Candidate1)')">$(_LibUsbDllPath_Candidate1)</LibUsbDllPath>
+      <LibUsbDllPath Condition="'$(LibUsbDllPath)' == '' and Exists('$(_LibUsbDllPath_Candidate2)')">$(_LibUsbDllPath_Candidate2)</LibUsbDllPath>
+      <LibUsbDllPath Condition="'$(LibUsbDllPath)' == '' and Exists('$(_LibUsbDllPath_Candidate3)')">$(_LibUsbDllPath_Candidate3)</LibUsbDllPath>
+    </PropertyGroup>
+
+    <Message Text="Found libusb-1.0.dll at '$(LibUsbDllPath)'" Importance="high" Condition="'$(LibUsbDllPath)' != ''" />
+    <Message Text="libusb-1.0.dll could not be found in supplied path or any of standard vcpkg paths." Importance="high" Condition="'$(LibUsbDllPath)' == ''" />
+
+    <Copy SourceFiles="$(LibUsbDllPath)" DestinationFolder="$(OutputPath)" Condition="Exists('$(LibUsbDllPath)')" />
   </Target>
 
   <Target
