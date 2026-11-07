@@ -15,7 +15,7 @@ using Polly.Registry;
 namespace Smdn.IO.UsbHid;
 
 /// <summary>
-/// An implementation of <see cref="IUsbHidService"/> that uses HidSharp as the backend.
+/// An implementation of <see cref="IUsbHidService"/> that uses HIDSharp as the backend.
 /// </summary>
 internal sealed class HidSharpUsbHidService(
   ResiliencePipelineProvider<string>? resiliencePipelineProvider,

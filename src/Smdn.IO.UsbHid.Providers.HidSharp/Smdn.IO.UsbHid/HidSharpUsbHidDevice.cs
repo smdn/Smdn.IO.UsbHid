@@ -20,7 +20,7 @@ namespace Smdn.IO.UsbHid;
 
 /// <summary>
 /// An implementation of <see cref="IUsbHidDevice"/> that uses
-/// <see cref="HidDevice"/> of HidSharp as the backend.
+/// <see cref="HidDevice"/> of HIDSharp as the backend.
 /// </summary>
 public sealed partial class HidSharpUsbHidDevice : IUsbHidDevice<HidDevice> {
   /// <summary>

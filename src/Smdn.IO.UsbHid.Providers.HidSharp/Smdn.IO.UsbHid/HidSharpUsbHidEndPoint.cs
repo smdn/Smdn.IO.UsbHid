@@ -15,7 +15,7 @@ namespace Smdn.IO.UsbHid;
 
 /// <summary>
 /// An implementation of <see cref="IUsbHidEndPoint"/> that
-/// uses <see cref="HidStream"/> of HidSharp as the backend.
+/// uses <see cref="HidStream"/> of HIDSharp as the backend.
 /// </summary>
 public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStream> {
   private readonly bool shouldDisposeDevice;

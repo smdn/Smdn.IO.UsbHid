@@ -5,7 +5,7 @@ using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
 
-// Register the IUsbHidService using HidSharp as the implementation provider
+// Register the IUsbHidService using HIDSharp as the implementation provider
 services.AddHidSharpUsbHid();
 
 var serviceProvider = services.BuildServiceProvider();

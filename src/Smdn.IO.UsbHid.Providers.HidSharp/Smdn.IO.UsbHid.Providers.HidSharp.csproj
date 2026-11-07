@@ -16,10 +16,10 @@ SPDX-License-Identifier: MIT
     <Description>
 <![CDATA[`$(AssemblyName)` is a backend provider for [Smdn.IO.UsbHid.Abstractions](https://www.nuget.org/packages/Smdn.IO.UsbHid.Abstractions)
 that utilizes the [HIDSharp](https://github.com/SeekHisKingdom/HIDSharp/) library for hardware communication.
-It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `HidSharp` implementation.
+It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `HIDSharp` implementation.
 ]]>
     </Description>
-    <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device,HidSharp</PackageTags>
+    <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device,HIDSharp</PackageTags>
     <CopyrightYear>2026</CopyrightYear>
     <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>
@@ -60,7 +60,7 @@ The following example demonstrates registering and getting USB HID services (`IU
 $([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\..\examples\$(PackageId)\GettingStarted\Program.cs').TrimEnd())
 ```
 
-`AddHidSharpUsbHid()` registers the HidSharp as backend provider. By changing this to another provider's registration method,
+`AddHidSharpUsbHid()` registers the HIDSharp as backend provider. By changing this to another provider's registration method,
 you can switch backends without modifying other code.
 
 More examples can be found on the [GitHub repository]($(RepositoryUrl)/tree/$(SmdnWorkflowsDotNetExpectedReleaseTag)/examples/$(PackageId)/).

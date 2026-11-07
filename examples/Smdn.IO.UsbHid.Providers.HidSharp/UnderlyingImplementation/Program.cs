@@ -23,8 +23,8 @@ using IUsbHidDevice d = usbHidService.GetDevices(VendorId, ProductId).First();
 var device = (IUsbHidDevice<HidSharp.HidDevice>)d;
 
 // It is possible to access the HidDevice object via the
-// UnderlyingDevice property when using HidSharp.
-// This allows you to access HidSharp-specific APIs.
+// UnderlyingDevice property when using HIDSharp.
+// This allows you to access HIDSharp-specific APIs.
 HidSharp.HidDevice hidDevice = device.UnderlyingDevice;
 
 Console.WriteLine("DevicePath: {0}", hidDevice.DevicePath);
