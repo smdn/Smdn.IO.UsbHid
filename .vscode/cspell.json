@@ -14,6 +14,7 @@
     "cloneable",
     "HIDSharp",
     "hidraw",
+    "libhidapi",
     "libusb",
     "LibUsbDotNet",
     "LINQ",
