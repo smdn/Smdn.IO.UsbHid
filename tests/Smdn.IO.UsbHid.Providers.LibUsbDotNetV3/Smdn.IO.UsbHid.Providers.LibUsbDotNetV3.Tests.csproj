@@ -8,19 +8,9 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup>
-    <_IsRunningOnGitHubActionsWindowsRunnerImage Condition="
-      '$(GITHUB_ACTIONS)' == 'true' and
-      $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
-        $([System.Runtime.InteropServices.OSPlatform]::Windows)
-      ))
-    ">true</_IsRunningOnGitHubActionsWindowsRunnerImage>
-
-    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet100)' == 'true' ">net10.0;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet80)' == 'true' ">net8.0;$(TargetFrameworks)</TargetFrameworks>
-    <!-- disabled test with .NET Framework on GitHub Actions Windows runner image -->
+    <!-- disable test with .NET Framework on GitHub Actions Windows runner image -->
     <TargetFrameworks Condition="
-      '$(EnableTargetFrameworkNetFx)' == 'true' and
-      '$(_IsRunningOnGitHubActionsWindowsRunnerImage)' != 'true'
+      $([MSBuild]::IsOsPlatform('Windows')) and '$(GITHUB_ACTIONS)' != 'true'
     ">net481;net462;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
