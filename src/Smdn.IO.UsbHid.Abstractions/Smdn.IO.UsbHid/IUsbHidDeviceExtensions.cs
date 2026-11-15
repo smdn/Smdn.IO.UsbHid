@@ -256,8 +256,14 @@ public static class IUsbHidDeviceExtensions {
 #if NETFRAMEWORK
       // Because string interpolation on the .NET Framework has an issue where
       // it is formatted incorrectly (?), for example, as "{04D8:X4}" instead of
-      // "{04D8:003F}", use String.Format as an alternative.
-      ?? string.Format(provider: null, "{{{0:X4}:{1:X4}}}", device.VendorId, device.ProductId);
+      // "{04D8:003F}", use String.Concat and ToString(format, provider) as an alternative.
+      ?? string.Concat(
+          "{",
+          device.VendorId.ToString("X4", provider: null),
+          ":",
+          device.ProductId.ToString("X4", provider: null),
+          "}"
+        );
 #else
       ?? $"{{{device.VendorId:X4}:{device.ProductId:X4}}}";
 #endif
