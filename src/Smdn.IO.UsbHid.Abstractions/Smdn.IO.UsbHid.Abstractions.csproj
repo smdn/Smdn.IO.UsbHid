@@ -20,6 +20,7 @@ to switch between different hardware access implementations through dependency i
 
 The following packages are available for the USB HID backend providers:
 
+- [Smdn.IO.UsbHid.Providers.HidApiDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidApiDotNet)
 - [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)
