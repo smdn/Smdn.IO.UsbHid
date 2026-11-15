@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,16 +54,36 @@ public class IUsbHidServiceExtensionsTests {
       return default;
     }
 
-    public bool TryGetProductName([NotNullWhen(true)] out string? productName)
+    public bool TryGetProductName(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? productName
+    )
       => throw new NotImplementedException();
 
-    public bool TryGetManufacturer([NotNullWhen(true)] out string? manufacturer)
+    public bool TryGetManufacturer(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? manufacturer
+    )
       => throw new NotImplementedException();
 
-    public bool TryGetSerialNumber([NotNullWhen(true)] out string? serialNumber)
+    public bool TryGetSerialNumber(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? serialNumber
+    )
       => throw new NotImplementedException();
 
-    public bool TryGetDeviceIdentifier([NotNullWhen(true)] out string? deviceIdentifier)
+    public bool TryGetDeviceIdentifier(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? deviceIdentifier
+    )
       => throw new NotImplementedException();
 
     public IUsbHidEndPoint OpenEndPoint(

@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,16 +50,36 @@ public class IUsbHidDeviceExtensionsTests {
       return default;
     }
 
-    public bool TryGetProductName([NotNullWhen(true)] out string? productName)
+    public bool TryGetProductName(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? productName
+    )
       => throw new NotImplementedException();
 
-    public bool TryGetManufacturer([NotNullWhen(true)] out string? manufacturer)
+    public bool TryGetManufacturer(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? manufacturer
+    )
       => throw new NotImplementedException();
 
-    public bool TryGetSerialNumber([NotNullWhen(true)] out string? serialNumber)
+    public bool TryGetSerialNumber(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? serialNumber
+    )
       => (serialNumber = this.serialNumber) is not null;
 
-    public bool TryGetDeviceIdentifier([NotNullWhen(true)] out string? deviceIdentifier)
+    public bool TryGetDeviceIdentifier(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out string? deviceIdentifier
+    )
       => (deviceIdentifier = this.deviceIdentifier) is not null;
 
     public IUsbHidEndPoint OpenEndPoint(
