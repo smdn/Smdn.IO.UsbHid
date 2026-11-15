@@ -20,6 +20,9 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
 
 To use this library, the native library `libusb-1.0` is required. Neither this package nor [LibUsbDotNet](https://www.nuget.org/packages/LibUsbDotNet) includes `libusb-1.0`.
 Therefore, please install `libusb-1.0` on your system or place it in the output directory of the executable file.
+
+Note: Although this package is marked with `IsAotCompatible=true`, the underlying LibUsbDotNet library does not claim AOT compatibility
+and is not marked as such. As a result, warnings such as `IL3058` may be reported during AOT-enabled compilation.
 ]]>
     </Description>
   </PropertyGroup>

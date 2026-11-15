@@ -16,6 +16,9 @@ SPDX-License-Identifier: MIT
 <![CDATA[`$(AssemblyName)` is a backend provider for [Smdn.IO.UsbHid.Abstractions](https://www.nuget.org/packages/Smdn.IO.UsbHid.Abstractions)
 that utilizes the [HIDSharp](https://github.com/SeekHisKingdom/HIDSharp/) library for hardware communication.
 It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operate on HID devices through the `HIDSharp` implementation.
+
+Note: Although this package is marked with `IsAotCompatible=true`, the underlying HIDSharp library does not claim AOT compatibility
+and is not marked as such. As a result, warnings such as `IL3058` may be reported during AOT-enabled compilation.
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device,HIDSharp</PackageTags>

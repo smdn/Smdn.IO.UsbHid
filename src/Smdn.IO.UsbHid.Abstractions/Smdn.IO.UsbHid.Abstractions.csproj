@@ -23,6 +23,10 @@ The following packages are available for the USB HID backend providers:
 - [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)
+
+Note: This library and the backend providers above are marked with `IsAotCompatible=true`.
+However, since the underlying backend libraries are not yet AOT-compatible, warnings such as `IL3058`
+may be reported.
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device</PackageTags>

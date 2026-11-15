@@ -36,6 +36,9 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
 
 To use this library, the native library [HIDAPI](https://github.com/libusb/hidapi) is required. Neither this package nor [HidApi.Net](https://www.nuget.org/packages/HidApi.Net) includes `HIDAPI`.
 Therefore, please install `HIDAPI` and its dependencies on your system or place it in the output directory of the executable file.
+
+Note: Although this package is marked with `IsAotCompatible=true`, HidApi.Net is not explicitly marked with `IsAotCompatible=true`
+(despite claiming AOT compatibility). As a result, warnings such as `IL3058` may be reported during AOT-enabled compilation.
 ]]>
     </Description>
   </PropertyGroup>
