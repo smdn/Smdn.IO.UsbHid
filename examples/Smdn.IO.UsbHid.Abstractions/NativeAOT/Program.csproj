@@ -1,0 +1,41 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Enables publishing via Native AOT compilation. -->
+    <PublishAot>true</PublishAot>
+
+    <!--
+      Set to `false` to suppress warning IL3058, which is reported AOT compilation
+      when dependent libraries do not explicitly declare AOT compatibility.
+    -->
+    <VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
+
+    <!--
+      While the `Smdn.IO.UsbHid.Abstractions` and `Smdn.IO.UsbHid.Providers.*` packages
+      themselves are AOT-compatible, the underlying backend libraries do not explicitly
+      declare AOT compatibility. Therefore, using them with Native AOT may introduce
+      runtime risks or additional compilation warnings.
+
+      Note that although HidApi.Net claims to be AOT-compatible, the assembly
+      metadata does not yet include `IsAotCompatible=true`.
+      Consequently, warning IL3058 is reported during AOT compilation.
+      Currently, HidApi.Net is the recommended backend for Native AOT scenarios.
+    -->
+    <PackageReference Include="Smdn.IO.UsbHid.Providers.HidApiDotNet" Version="1.1.0" />
+  </ItemGroup>
+
+</Project>
