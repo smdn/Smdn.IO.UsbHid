@@ -252,6 +252,14 @@ public static class IUsbHidDeviceExtensions {
       return $"{{{device.VendorId:X4}:{device.ProductId:X4};{serialNumber}}}";
     }
 
-    return device.ToString() ?? $"{{{device.VendorId:X4}:{device.ProductId:X4}}}";
+    return device.ToString()
+#if NETFRAMEWORK
+      // Because string interpolation on the .NET Framework has an issue where
+      // it is formatted incorrectly (?), for example, as "{04D8:X4}" instead of
+      // "{04D8:003F}", use String.Format as an alternative.
+      ?? string.Format(provider: null, "{{{0:X4}:{1:X4}}}", device.VendorId, device.ProductId);
+#else
+      ?? $"{{{device.VendorId:X4}:{device.ProductId:X4}}}";
+#endif
   }
 }
