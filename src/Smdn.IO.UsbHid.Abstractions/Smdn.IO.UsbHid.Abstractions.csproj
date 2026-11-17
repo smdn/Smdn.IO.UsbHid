@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
-    <IsAotCompatible>false</IsAotCompatible>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
@@ -24,6 +23,10 @@ The following packages are available for the USB HID backend providers:
 - [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet)
 - [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3)
+
+Note: This library and the backend providers above are marked with `IsAotCompatible=true`.
+However, since the underlying backend libraries are not yet AOT-compatible, warnings such as `IL3058`
+may be reported.
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,HID,I/O,abstraction,abstractions,dependency-injection,device</PackageTags>
@@ -35,6 +38,13 @@ The following packages are available for the USB HID backend providers:
     <PackageReference Include="System.Memory" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup
+    Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))"
+    Label="Update to AOT-ready package version"
+  >
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
   </ItemGroup>
 
   <Target Name="GenerateReadmeFileContent">

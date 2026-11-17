@@ -5,11 +5,13 @@ SPDX-License-Identifier: MIT
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
-    <IsAotCompatible>false</IsAotCompatible>
-    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
+    <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
+    <NoWarn>CS1591;$(NoWarn)</NoWarn>
+    <!-- Suppress assembly AOT compatibility warning in the CI/CD environment (packaging and testing) -->
+    <NoWarn Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(NoWarn);IL3058</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
@@ -22,6 +24,13 @@ SPDX-License-Identifier: MIT
     <ProjectOrPackageReference ReferencePackageVersion="1.0.0" Include="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup
+    Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))"
+    Label="Update to AOT-ready package version"
+  >
+    <ProjectOrPackageReference ReferencePackageVersion="1.1.0" Update="..\Smdn.IO.UsbHid.Abstractions\Smdn.IO.UsbHid.Abstractions.csproj" />
+  </ItemGroup>
+
   <PropertyGroup Label="package properties">
     <Description>
 <![CDATA[`$(AssemblyName)` is a backend provider for [Smdn.IO.UsbHid.Abstractions](https://www.nuget.org/packages/Smdn.IO.UsbHid.Abstractions)
@@ -30,6 +39,9 @@ It enables applications using the `Smdn.IO.UsbHid.*` abstraction layer to operat
 
 To use this library, the native library [HIDAPI](https://github.com/libusb/hidapi) is required. Neither this package nor [HidApi.Net](https://www.nuget.org/packages/HidApi.Net) includes `HIDAPI`.
 Therefore, please install `HIDAPI` and its dependencies on your system or place it in the output directory of the executable file.
+
+Note: Although this package is marked with `IsAotCompatible=true`, HidApi.Net is not explicitly marked with `IsAotCompatible=true`
+(despite claiming AOT compatibility). As a result, warnings such as `IL3058` may be reported during AOT-enabled compilation.
 ]]>
     </Description>
   </PropertyGroup>
@@ -41,6 +53,17 @@ Therefore, please install `HIDAPI` and its dependencies on your system or place 
     <PackageReference Include="Polly.Core" Version="8.0.0" />
     <PackageReference Include="Polly.Extensions" Version="8.0.0" />
     <PackageReference Include="Smdn.Extensions.Polly.KeyedRegistry" Version="[1.2.0,2.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup
+    Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))"
+    Label="Update to AOT-ready package version"
+  >
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageReference Update="Polly.Core" Version="8.9.0"/>
+    <PackageReference Update="Polly.Extensions" Version="8.9.0"/>
+    <PackageReference Update="Smdn.Extensions.Polly.KeyedRegistry" Version="[1.3.0,2.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

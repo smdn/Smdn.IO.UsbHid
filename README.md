@@ -11,14 +11,30 @@ This library provides a unified interface for interacting with USB HID devices i
 
 The design decouples application logic from specific hardware access libraries through a dependency injection-friendly structure using `UsbHidServiceBuilder`. Extension methods are included to simplify common tasks such as finding specific devices by VID/PID and opening endpoints. It serves as the common foundation for the `Smdn.IO.UsbHid.*` libraries, ensuring a consistent API regardless of the chosen backend.
 
-The following backend providers that implement these interfaces are available for communicating with USB HID devices. You can choose any of them based on your requirements, such as licensing and supported operating systems.
+<details>
 
-| Backend Provider | USB HID Library <br> (.NET Implementation) | Backend Library License | Required Native Library | Supported OS |
-| --- | --- | --- | --- | --- |
-| `Smdn.IO.UsbHid.Providers.HidApiDotNet` | HidApi.Net | MIT License | `hidapi` | Windows, Linux, macOS |
-| `Smdn.IO.UsbHid.Providers.HidSharp` | HIDSharp | Apache License 2.0 | - | Windows, Linux, macOS |
-| `Smdn.IO.UsbHid.Providers.LibUsbDotNet` | LibUsbDotNet, version 2 | LGPL-3.0 | `libusb` | Windows, Linux, macOS |
-| `Smdn.IO.UsbHid.Providers.LibUsbDotNetV3` | LibUsbDotNet, version 3 | LGPL-3.0 | `libusb` | Windows, Linux, macOS |
+<summary>Native AOT Compatibility and Considerations</summary>
+
+Both `Smdn.IO.UsbHid.Abstractions` and `Smdn.IO.UsbHid.Providers.*` assemblies are marked with `IsAotCompatible=true` and are [AOT-compatible](https://learn.microsoft.com/dotnet/core/deploying/native-aot). However, [warning IL3058](https://learn.microsoft.com/dotnet/core/deploying/native-aot/warnings/il3058) may be reported during AOT-enabled compilation depending on the chosen backend library's AOT support status. For comprehensive notes on Native AOT compilation, potential compilation warnings (such as `IL3058`), and configuration guidelines, refer to the [Native AOT sample README](examples/Smdn.IO.UsbHid.Abstractions/NativeAOT/README.md).
+
+</details>
+
+The following backend providers that implement these interfaces are available for communicating with USB HID devices. You can choose any of them based on your requirements, such as licensing, AOT support, required native libraries and supported operating systems:
+
+| Backend Provider | USB HID Library <br> (.NET Implementation) | Backend Library License | Backend Library AOT Support | Required Native Library | Supported OS |
+| --- | --- | --- | --- | --- | --- |
+| `Smdn.IO.UsbHid.Providers.HidApiDotNet` | [HidApi.Net](https://github.com/badcel/HidApi.Net) | MIT License | ⚠️ \*1 | `hidapi` | Windows, Linux, macOS |
+| `Smdn.IO.UsbHid.Providers.HidSharp` | [HIDSharp](https://github.com/SeekHisKingdom/HIDSharp) | Apache License 2.0 | ❓ \*2 | - | Windows, Linux, macOS |
+| `Smdn.IO.UsbHid.Providers.LibUsbDotNet` | [LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet), version 2 | LGPL-3.0 | ❓ \*2 | `libusb` | Windows, Linux, macOS |
+| `Smdn.IO.UsbHid.Providers.LibUsbDotNetV3` | [LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet), version 3 | LGPL-3.0 | ❓ \*2 | `libusb` | Windows, Linux, macOS |
+
+<small>
+
+\*1 [HidApi.Net claims AOT compatibility](https://github.com/badcel/HidApi.Net#native-aot), but because it is not explicitly marked with `IsAotCompatible=true`, warning IL3058 may be reported during AOT-enabled compilation.<br>
+\*2 The library does not explicitly claim or document AOT compatibility.
+
+</small>
+
 
 
 # Backend Providers
